@@ -128,14 +128,14 @@ paths:
           $ref: '#/components/responses/AuthDataKeyError'
    
      
-  '/red-flags':
+  '/incidents':
     post:
       
       tags:
-        - Red-flags
+        - Red-flags / Interventions
         
-      summary: Creates a new Red-flag record
-      operationId: create_a_red_flag
+      summary: Creates a new Red-flag or intervention record
+      operationId: create_an_incident_record
       security:
         - bearerAuth: []
       requestBody:
@@ -148,8 +148,10 @@ paths:
                   $ref: '#/components/schemas/IncidentTitle'
                 comment:
                   $ref: '#/components/schemas/IncidentComment'
-                 
-              
+                type:
+                  type: string
+                  description: Can either be red-flag or intervention
+                  example: red-flag
                 location:
                   type: array
                   description: Where the incident took place. It contains latitude and longitude coordinates
@@ -170,15 +172,7 @@ paths:
                   example:
                     - image1.jpg
                     - image2.jpg
-                tags:
-                  type: array
-                  description: category Redflag record is associated with
-                  uniqueItems: true
-                  example:
-                    - rape
-                    - abuse
-                    - violence
-                    - gender
+              
                     
       responses:
         '201':
@@ -197,7 +191,7 @@ paths:
                       properties:
                         red-flag:
                           $ref: '#/components/schemas/Red-flag'
-                        message:
+                        success:
                           type: string
                           example: Created red-flag record
         '400':
@@ -208,16 +202,9 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
                     
-        '409':
-          description: |
-            Returned when user tries to create a duplicate Red-flag record. A record is duplicate if both title and comment match a Red-flag record in the system.
-        
-        '403':
-          $ref: '#/components/responses/AdminForbiddenError'
-               
-    
      
-
+    
+  '/red-flags':
     get:
       tags:
         - Red-flags
@@ -230,10 +217,15 @@ paths:
         '200':
           description: Successful operation
           content:
-            application/json:
-              schema:
-                
-                $ref: '#/components/schemas/Red-flag'
+           application/json:
+            schema:
+              properties:
+                status:
+                  type: integer
+                  description: Not Found
+                  example: 200
+                data:
+                  $ref: '#/components/schemas/Red-flag'
         
         '401':
           $ref: '#/components/responses/UnauthorizedError'
@@ -258,40 +250,27 @@ paths:
         '200':
           description: Successful operation
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IncidentId'
-        '400':
-          description: Invalid Red-flag ID
-          content:
+            # application/json:
+              # schema:
+                # $ref: '#/components/schemas/IncidentId'
             application/json:
               schema:
                 properties:
                   status:
                     type: integer
-                    description: Bad Request
-                    example: 400
-                  error:
-                    type: string
-                    description: Error message
-                    example: Invalid record id
+                    description: Successful operation
+                    example: 200
+                  data:
+                    $ref: '#/components/schemas/Red-flag'
+        '400':
+          description: Invalid Red-flag ID
+         
         '401':
           $ref: '#/components/responses/UnauthorizedError'
           
         '404':
-          description: Red-flag record does not exist
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: Not Found
-                    example: 404
-                  error:
-                    type: string
-                    description: Error message
-                    example: red-flag record does not exist
+          description: Red-flag record with specified id does not exist
+          
     delete:
       tags:
         - Red-flags
@@ -477,7 +456,7 @@ paths:
                       properties:
                         id:
                           $ref: '#/components/schemas/IncidentId'
-                        message:
+                        success:
                           type: string
                           example: Updated red-flag comment
         '400':
@@ -617,6 +596,10 @@ components:
           example: 'Thu, 03 Jan 2019 00:00:00 GMT'
         status:
           $ref: '#/components/schemas/IncidentStatus'
+        type:
+          type: string
+          description: Can either be red-flag or intervention
+          example: red-flag
         Videos:
           type: string
           description: Video URLS
@@ -629,15 +612,7 @@ components:
           example:
             - image1.jpg
             - image2.jpg
-        tags:
-          type: string
-          description: Array of string tags Red-flag record is associated with
-          example:
-            - rape
-            - violence
-            - assualt
-            - gender
-            
+      
           
     
     NewUser:
