@@ -1,0 +1,788 @@
+openapi: 3.0.0
+info:
+  version: v3
+  title: IReporter API
+  description: >-
+    Corruption is a huge bane to Africa’s development. African countries must
+    develop novel and localised solutions that will curb this menace, hence the
+    birth of iReporter. iReporter enables any/every citizen to bring any form of
+    corruption to the notice of appropriate authorities and the general public.
+    Users can also report on things that needs government intervention
+  contact:
+    name: Kalule Arthur
+    email: kalulearthur@gmail.com
+servers:
+# Added by API Auto Mocking Plugin
+  - description: Ireporter API DEV
+    url: 'https://ireporterapiv3.herokuapp.com/api/v3'
+paths:
+  '/auth/signup':
+    post:
+      tags:
+        - User
+      summary: Creates a new user
+      description: >
+        This endpoint creates a new user account. The admin user account is in
+        the system by default and therefore new users are not admin users.
+      operationId: register_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          $ref: '#/components/schemas/User'
+                       
+                        token: 
+                          type: string
+                          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOiI5MDI3NDk0Yy00MjFmLTQwMjItOTMxOC0wNjI4MzYzYTFkMjUiLCJpYXQiOjE1NDY5NDQ0MjEsImV4cCI6MTU0Njk1NTIyMX0.72QEK83GnyzUoDNNaEI3WCxhj3afz-ManTEjCmP_uTE"
+                  
+                        message:
+                          type: string
+                          example: Account created Successfully
+        
+        '400':
+          description: >
+            Returns an error as a dictionary with invalid fieldnames as keys and
+            the corresponding specific error as the values for each invalid
+            field
+
+                    
+        '409':
+          description: |
+            Returned when new user details contain duplicate username, phone number or  email.
+                 
+         
+        '422':
+          $ref: '#/components/responses/AuthDataKeyError'
+          
+  '/auth/login':
+    post:
+      tags:
+        - User
+      summary: Logs in a user
+      description: >
+        This endpoint logs in a user. To login as admin, use username - "admin", password - "iReporter123".
+      operationId: login_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: iReporter123
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        token: 
+                          type: string
+                          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOiI5MDI3NDk0Yy00MjFmLTQwMjItOTMxOC0wNjI4MzYzYTFkMjUiLCJpYXQiOjE1NDY5NDQ0MjEsImV4cCI6MTU0Njk1NTIyMX0.72QEK83GnyzUoDNNaEI3WCxhj3afz-ManTEjCmP_uTE"
+                  
+                        success:
+                          type: string
+                          example: Logged in successfully
+        
+        '400':
+          description: >
+            Returns an error as a dictionary with invalid fieldnames as keys and
+            the corresponding specific error as the values for each invalid
+            field
+
+        '401':
+          description: Wrong username or password.
+          
+        '422':
+          $ref: '#/components/responses/AuthDataKeyError'
+   
+     
+  '/red-flags':
+    post:
+      
+      tags:
+        - Red-flags
+        
+      summary: Creates a new Red-flag record
+      operationId: create_a_red_flag
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                title:
+                  $ref: '#/components/schemas/IncidentTitle'
+                comment:
+                  $ref: '#/components/schemas/IncidentComment'
+                 
+              
+                location:
+                  type: array
+                  description: Where the incident took place. It contains latitude and longitude coordinates
+                  minItems: 2
+                  maxItems: 2
+                  example:
+                    - 43.000000
+                    - 144.400000
+                Videos:
+                  type: array
+                  description: Video URLS
+                  example:
+                    - vid1.mp4
+                    - vid2.mp4
+                Images:
+                  type: array
+                  description: image URLS
+                  example:
+                    - image1.jpg
+                    - image2.jpg
+                tags:
+                  type: array
+                  description: category Redflag record is associated with
+                  uniqueItems: true
+                  example:
+                    - rape
+                    - abuse
+                    - violence
+                    - gender
+                    
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        red-flag:
+                          $ref: '#/components/schemas/Red-flag'
+                        message:
+                          type: string
+                          example: Created red-flag record
+        '400':
+          description: >
+            Returns an error as a dictionary with invalid fieldnames as keys and
+            the corresponding specific error as the values for each invalid
+            field
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                    
+        '409':
+          description: |
+            Returned when user tries to create a duplicate Red-flag record. A record is duplicate if both title and comment match a Red-flag record in the system.
+        
+        '403':
+          $ref: '#/components/responses/AdminForbiddenError'
+               
+    
+     
+
+    get:
+      tags:
+        - Red-flags
+      summary: Fetch all Red-flag records.
+      description: >
+        Fetches red-flags for a given user.
+        Admin can access records for all users whereas a user can only access their own Red-flag records.
+      operationId: getRedFlags
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                
+                $ref: '#/components/schemas/Red-flag'
+        
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+              
+                
+  '/red-flags/{red-flag-id}':
+    get:
+      tags:
+        - Red-flags
+      summary: Fetch a Red-flag record.
+      description: |
+        Fetches a red-flag record for a given user.
+      operationId: get_a_Red-Flag
+      parameters:
+        - name: red-flag-id
+          in: path
+          description: ID of the Red-flag record you want to access
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncidentId'
+        '400':
+          description: Invalid Red-flag ID
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    description: Bad Request
+                    example: 400
+                  error:
+                    type: string
+                    description: Error message
+                    example: Invalid record id
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '404':
+          description: Red-flag record does not exist
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    description: Not Found
+                    example: 404
+                  error:
+                    type: string
+                    description: Error message
+                    example: red-flag record does not exist
+    delete:
+      tags:
+        - Red-flags
+      summary: delete a Red-flag record.
+      description: |
+        Deletes a red-flag record for a given user.
+      operationId: delete_a_Red-Flag
+      parameters:
+        - name: red-flag-id
+          in: path
+          description: ID of the Red-flag record you want to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+      responses:
+        '200':
+          description: Successfull Operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    description: status code
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        message:
+                          type: string
+                          example: red-flag record has been deleted
+        '400':
+          description: Invalid Red-flag ID
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    description: Bad Request
+                    example: 400
+                  error:
+                    type: string
+                    description: Error message
+                    example: Invalid record id
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '404':
+          description: Red-flag record does not exist
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    description: Not Found
+                    example: 404
+                  error:
+                    type: string
+                    description: Error message
+                    example: red-flag record does not exist
+        '403':
+          $ref: '#/components/responses/AdminForbiddenError'
+ 
+  '/red-flags/{red-flag-id}/location':
+    patch:
+      tags:
+        - Red-flags
+      summary: Edits location of a specific red flag record
+      description: > 
+        Only user who created the Red-flag record can edit the location of the redflag.The user can only edit Red-flag record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.
+      operationId: edit_red_flag_location
+      parameters:
+        - name: red-flag-id
+          in: path
+          description: ID of the Red-flag record whose location you want to edit
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+          
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                location:
+                  $ref: '#/components/schemas/IncidentLocation'
+                  
+      responses:
+        '200':
+          description: succesful location
+          content: 
+            application/json:
+              schema:
+                properties:
+                  status:
+                      type: integer
+                      description: status code
+                      example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: '#/components/schemas/IncidentId'
+                        message:
+                          type: string
+                          example: Updated red-flag location
+        '400':
+          description: Bad Format location data
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: 
+                    type: integer
+                    example: 400
+                  error:
+                    type: string
+                    example: 'latitude must be between -90 and 90 and longitude coordinates must be between -180 and 180'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+          description: >
+            Returned when admin tries to access endpoint or when user tries to edit another user's resource.
+          
+        '404':
+          $ref: '#/components/responses/RedFlagNotFound'
+  
+  '/red-flags/{red-flag-id}/comment':
+    patch:
+      tags:
+        - Red-flags
+      summary: Edits comment of a specific red flag record
+      description: > 
+        Only user who created the Red-flag record can edit the comment of the redflag.The user can only edit Red-flag record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.
+      operationId: edit_red_flag_comment
+      parameters:
+        - name: red-flag-id
+          in: path
+          description: ID of the Red-flag record whose comment you want to edit
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+          
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                comment:
+                  $ref: '#/components/schemas/IncidentComment'
+                  
+      responses:
+        '200':
+          description: succesful Operation
+          content: 
+            application/json:
+              schema:
+                properties:
+                  status:
+                      type: integer
+                      description: status code
+                      example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: '#/components/schemas/IncidentId'
+                        message:
+                          type: string
+                          example: Updated red-flag comment
+        '400':
+          description: Bad Format comment data
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: 
+                    type: integer
+                    example: 400
+                  error:
+                    type: string
+                    example: "Field must contain a minimum of 10 characters"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+            $ref: '#/components/responses/AdminForbiddenError'
+          
+        '404':
+          $ref: '#/components/responses/RedFlagNotFound' 
+  
+  '/red-flags/{red-flag-id}/status':
+    patch:
+      tags:
+        - Red-flags
+      summary: Edits status of a specific red flag record
+      description: > 
+        Only admin can access this route
+      operationId: edit_red_flag_status
+      parameters:
+        - name: red-flag-id
+          in: path
+          description: ID of the Red-flag record whose status you want to edit
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+          
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                status:
+                  $ref: '#/components/schemas/IncidentStatus'
+                  
+      responses:
+        '200':
+          description: successful Operation
+          content: 
+            application/json:
+              schema:
+                properties:
+                  status:
+                      type: integer
+                      description: status code
+                      example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: '#/components/schemas/IncidentId'
+                        message:
+                          type: string
+                          example: Updated red-flag status
+        '400':
+          description: Bad Format status data
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: 
+                    type: integer
+                    example: 400
+                  error:
+                    type: string
+                    example: "Status must either be 'resolved','under investigation' or 'rejected'"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+            $ref: '#/components/responses/NonAdminForbiddenError'
+          
+        '404':
+          $ref: '#/components/responses/RedFlagNotFound'
+  
+components:
+
+      
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          
+   
+        firstname:
+          $ref: '#/components/schemas/UserFirstName'
+        lastname:
+          $ref: '#/components/schemas/UserLastName'
+        othernames:
+          $ref: '#/components/schemas/UserOtherNames'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+        password:
+          $ref: '#/components/schemas/UserPassword'
+        username:
+          $ref: '#/components/schemas/UserName'
+        phoneNumber:
+          $ref: '#/components/schemas/UserPhoneNumber'
+   
+          
+      
+    Red-flag:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/IncidentId'
+        title:
+          $ref: '#/components/schemas/IncidentTitle'
+        comment:
+          $ref: '#/components/schemas/IncidentComment'
+        location:
+          $ref: '#/components/schemas/IncidentLocation'
+        created_on:
+          type: string
+          description: Date when record was created
+          example: 'Thu, 03 Jan 2019 00:00:00 GMT'
+        status:
+          $ref: '#/components/schemas/IncidentStatus'
+        Videos:
+          type: string
+          description: Video URLS
+          example:
+            - vid1.mp4
+            - vid2.mp4
+        Images:
+          type: string
+          description: image URLS
+          example:
+            - image1.jpg
+            - image2.jpg
+        tags:
+          type: string
+          description: Array of string tags Red-flag record is associated with
+          example:
+            - rape
+            - violence
+            - assualt
+            - gender
+            
+          
+    
+    NewUser:
+      type: object
+      properties:
+        
+        firstname:
+          $ref: '#/components/schemas/UserFirstName'
+        lastname:
+          $ref: '#/components/schemas/UserLastName'
+        othernames:
+          $ref: '#/components/schemas/UserOtherNames'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+        password:
+          $ref: '#/components/schemas/UserPassword'
+        username:
+          $ref: '#/components/schemas/UserName'
+        phoneNumber:
+          $ref: '#/components/schemas/UserPhoneNumber'
+          
+    
+
+   
+          
+    UserFirstName:
+      type: string
+      description: The first name of new user
+      example: Arthur
+    UserLastName:
+      type: string
+      description: The last name of the new user
+      example: Kalule
+    UserOtherNames:
+      type: string
+      description: The other names of the new user
+      example: Gerald
+    UserPhoneNumber:
+      type: string
+      description: Phonenumber must have a maximum of ten digits
+      minLength: 10
+      maxLength: 10
+      example: 0772019937
+    UserName:
+      type: string
+      description: >
+        Username may contain numbers and should be atleast 5 characters
+        long.
+      minLength: 4
+      example: kalsmic
+      
+    UserPassword:
+      type: string
+      description: >
+        The password should be 8 characters long and must include atleast
+        one upper case character, atleast one lower case character and
+        atleast one digit character
+      format: password
+      example: Password123
+    UserEmail:
+      type: string
+      description: The email address of the user
+      format: email
+      example: kalulearthur@gmail.com
+  
+
+
+          
+    IncidentId:
+      additionalProperties:
+        description: Unique reference to the Redflag Record
+        type: integer
+        example: 1
+        
+    IncidentLocation:
+        type: array
+        description: Where the incident took place. It contains latitude and longitude coordinates
+        minItems: 2
+        maxItems: 2
+        example:
+          - 43.000000
+          - 144.400000
+      
+    IncidentStatus:
+      type: string
+      description: >
+        Redflag status can either be Draft, Under investigation,Resolved or
+        Rejected
+      example: Resolved
+      
+    IncidentComment:
+      description: A Description of what happened
+      type: string
+      minLength: 10
+      example: Lorem ipsum eiusmod temport labore et dolore magna
+      
+    IncidentTitle:
+      description: What the Incident is about
+      type: string
+      minLength: 4
+      maxLength: 100
+      example: Lorem ipsum magna
+   
+    created_by:
+      type: string
+      description: Id of user who created the record
+      example: 2
+
+
+    
+      
+     
+   
+      
+ 
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    AdminForbiddenError:
+      description: 
+            Returned when admin tries to access endpoint or when user tries to edit another user's resource.
+      
+    NonAdminForbiddenError:
+      description: Returned when non admin user tries to access this endpoint
+     
+  
+    AuthDataKeyError:
+       description: Returned when new user data has wrong field keys.
+     
+    RedFlagNotFound:
+      description: red-flag record does not exist
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                type: string
+                example: red-flag record does not exist
+              status:
+                type: integer
+                example: 404
+security:
+  - bearerAuth: []
