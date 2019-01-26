@@ -307,7 +307,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_3"
           }
         } ],
         "requestBody" : {
@@ -363,7 +363,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_4"
           }
         } ],
         "requestBody" : {
@@ -439,7 +439,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid"
           }
         } ],
         "responses" : {
@@ -477,7 +477,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_1"
           }
         } ],
         "responses" : {
@@ -520,7 +520,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_2"
           }
         } ],
         "requestBody" : {
@@ -576,7 +576,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_3"
           }
         } ],
         "requestBody" : {
@@ -632,7 +632,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_4"
           }
         } ],
         "requestBody" : {
@@ -885,39 +885,6 @@
         "format" : "email",
         "example" : "kalulearthur@gmail.com"
       },
-      "IncidentId" : {
-        "type" : "object",
-        "additionalProperties" : {
-          "type" : "string",
-          "description" : "Unique reference to the incident Record",
-          "format" : "uuid"
-        }
-      },
-      "IncidentLocation" : {
-        "maxItems" : 2,
-        "minItems" : 2,
-        "type" : "array",
-        "description" : "Where the incident took place. It contains latitude and longitude coordinates",
-        "example" : [ 43.0, 144.4 ]
-      },
-      "IncidentStatus" : {
-        "type" : "string",
-        "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
-        "example" : "Resolved"
-      },
-      "IncidentComment" : {
-        "minLength" : 10,
-        "type" : "string",
-        "description" : "A Description of what happened",
-        "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
-      },
-      "IncidentTitle" : {
-        "maxLength" : 100,
-        "minLength" : 4,
-        "type" : "string",
-        "description" : "What the Incident is about",
-        "example" : "Lorem ipsum magna"
-      },
       "inline_response_201_data" : {
         "type" : "object",
         "properties" : {
@@ -996,10 +963,17 @@
         "type" : "object",
         "properties" : {
           "title" : {
-            "$ref" : "#/components/schemas/IncidentTitle"
+            "maxLength" : 100,
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "What the Incident is about",
+            "example" : "Lorem ipsum magna"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "type" : {
             "type" : "string",
@@ -1204,7 +1178,9 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "description" : "Unique reference to the incident Record",
+            "format" : "uuid"
           },
           "location" : {
             "type" : "string",
@@ -1244,6 +1220,15 @@
           }
         }
       },
+      "redflagid_3" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
       "inline_response_200_5_data" : {
         "type" : "object",
         "properties" : {
@@ -1252,7 +1237,10 @@
             "format" : "uuid"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "success" : {
             "type" : "string",
@@ -1281,7 +1269,18 @@
         "type" : "object",
         "properties" : {
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
+          }
+        }
+      },
+      "redflagid_4" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1329,6 +1328,15 @@
           }
         }
       },
+      "interventionid" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
       "inline_response_200_8" : {
         "type" : "object",
         "properties" : {
@@ -1340,6 +1348,15 @@
           },
           "data" : {
             "$ref" : "#/components/schemas/intervention"
+          }
+        }
+      },
+      "interventionid_1" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1377,7 +1394,20 @@
         "type" : "object",
         "properties" : {
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
+          }
+        }
+      },
+      "interventionid_2" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1385,7 +1415,8 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "format" : "uuid"
           },
           "location" : {
             "type" : "string",
@@ -1425,6 +1456,15 @@
           }
         }
       },
+      "interventionid_3" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
       "inline_response_200_11_data" : {
         "type" : "object",
         "properties" : {
@@ -1433,7 +1473,10 @@
             "format" : "uuid"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "success" : {
             "type" : "string",
@@ -1462,7 +1505,18 @@
         "type" : "object",
         "properties" : {
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Intervention status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
+          }
+        }
+      },
+      "interventionid_4" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
