@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.0",
   "info" : {
-    "version" : "v3",
+    "version" : "v2",
     "title" : "IReporter API",
     "description" : "Corruption is a huge bane to Africa’s development. African countries must develop novel and localised solutions that will curb this menace, hence the birth of iReporter. iReporter enables any/every citizen to bring any form of corruption to the notice of appropriate authorities and the general public. Users can also report on things that needs government intervention",
     "contact" : {
@@ -11,7 +11,7 @@
   },
   "servers" : [ {
     "description" : "Ireporter API DEV",
-    "url" : "https://ireporterapiv3.herokuapp.com/api/v3"
+    "url" : "https://ireporterapiv2.herokuapp.com/api/v2"
   } ],
   "paths" : {
     "/auth/signup" : {
