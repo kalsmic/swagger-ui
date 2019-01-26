@@ -428,7 +428,7 @@
     "/interventions/{intervention-id}" : {
       "get" : {
         "tags" : [ "interventions" ],
-        "summary" : "Fetch a intervention record.",
+        "summary" : "Fetch an intervention record.",
         "description" : "Fetches a intervention record for a given user.\n",
         "operationId" : "get_a_intervention",
         "parameters" : [ {
