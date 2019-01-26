@@ -76,7 +76,7 @@
             "description": "Returned when new user details contain duplicate username, phone number or  email.\n     \n"
           },
           "422": {
-            "$ref": "#/components/responses/AuthDataKeyError"
+            "description": "Returned when new user data has wrong field keys."
           }
         }
       }
@@ -147,7 +147,7 @@
             "description": "Wrong username or password."
           },
           "422": {
-            "$ref": "#/components/responses/AuthDataKeyError"
+            "description": "Returned when new user data has wrong field keys."
           }
         }
       }
@@ -254,7 +254,7 @@
             "description": "Returns an error as a dictionary with invalid fieldnames as keys and the corresponding specific error as the values for each invalid field\n"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           }
         }
       }
@@ -288,7 +288,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           }
         }
       }
@@ -566,13 +566,13 @@
             "description": "Bad Format of location coordinates"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           },
           "403": {
             "description": "Returned when admin tries to access endpoint or when user tries to edit another user's resource.\n"
           },
           "404": {
-            "$ref": "#/components/responses/RedFlagNotFound"
+            "description": "Red-flag record with specified id does not exist"
           }
         }
       }
@@ -666,13 +666,13 @@
             "description": "Bad Format comment data"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           },
           "403": {
-            "$ref": "#/components/responses/AdminForbiddenError"
+            "description": "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
           },
           "404": {
-            "$ref": "#/components/responses/RedFlagNotFound"
+            "description": "Red-flag record with specified id does not exist"
           }
         }
       }
@@ -762,7 +762,7 @@
             "description": "Returned when non admin user tries to access this endpoint or when access token is missing"
           },
           "404": {
-            "$ref": "#/components/responses/RedFlagNotFound"
+            "description": "Red-flag record with specified id does not exist"
           }
         }
       }
@@ -796,7 +796,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           }
         }
       }
@@ -849,7 +849,7 @@
             "description": "Invalid intervention ID"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           },
           "404": {
             "description": "intervention record with specified id does not exist"
@@ -919,7 +919,7 @@
             "description": "Returned when admin tries to delete a record  or when user tries to edit another user's intervention record"
           },
           "403": {
-            "$ref": "#/components/responses/AdminForbiddenError"
+            "description": "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
           },
           "404": {
             "description": "intervention record with specified id does not exist"
@@ -1018,13 +1018,13 @@
             "description": "Bad Format of location coordinates"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           },
           "403": {
             "description": "Returned when admin tries to access endpoint or when user tries to edit another user's resource.\n"
           },
           "404": {
-            "$ref": "#/components/responses/InterventionNotFound"
+            "description": "Intervention record with specified id does not exist"
           }
         }
       }
@@ -1118,13 +1118,13 @@
             "description": "Bad Format comment data"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Access token is missing or invalid"
           },
           "403": {
-            "$ref": "#/components/responses/AdminForbiddenError"
+            "description": "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
           },
           "404": {
-            "$ref": "#/components/responses/InterventionNotFound"
+            "description": "Intervention record with specified id does not exist"
           }
         }
       }
@@ -1214,7 +1214,7 @@
             "description": "Returned when non admin user tries to access this endpoint or when access token is missing"
           },
           "404": {
-            "$ref": "#/components/responses/InterventionNotFound"
+            "description": "Intervention record with specified id does not exist"
           }
         }
       }
@@ -1455,26 +1455,6 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
-      }
-    },
-    "responses": {
-      "UnauthorizedError": {
-        "description": "Access token is missing or invalid"
-      },
-      "AdminForbiddenError": {
-        "description": "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
-      },
-      "NonAdminForbiddenError": {
-        "description": "Returned when non admin user tries to access this endpoint"
-      },
-      "AuthDataKeyError": {
-        "description": "Returned when new user data has wrong field keys."
-      },
-      "RedFlagNotFound": {
-        "description": "Red-flag record with specified id does not exist"
-      },
-      "InterventionNotFound": {
-        "description": "Intervention record with specified id does not exist"
       }
     }
   },
