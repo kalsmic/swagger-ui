@@ -201,9 +201,8 @@ paths:
             field
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-                    
-     
-    
+ 
+  
   '/red-flags':
     get:
       tags:
@@ -270,21 +269,23 @@ paths:
           
         '404':
           description: Red-flag record with specified id does not exist
-          
     delete:
       tags:
-        - Red-flags
-      summary: delete a Red-flag record.
+        -  Red-flags
+      summary: Delete a red-flag record.
       description: |
         Deletes a red-flag record for a given user.
-      operationId: delete_a_Red-Flag
+      operationId: delete_a_redflag_record
+    
       parameters:
         - name: red-flag-id
           in: path
           description: ID of the Red-flag record you want to delete
+          
           required: true
           schema:
             $ref: '#/components/schemas/IncidentId'
+ 
       responses:
         '200':
           description: Successfull Operation
@@ -302,44 +303,25 @@ paths:
                       type: object
                       properties:
                         id:
-                          type: integer
-                          example: 1
-                        message:
+                          type: string
+                          format: uuid
+                        success:
                           type: string
                           example: red-flag record has been deleted
         '400':
           description: Invalid Red-flag ID
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: Bad Request
-                    example: 400
-                  error:
-                    type: string
-                    description: Error message
-                    example: Invalid record id
         '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
-        '404':
-          description: Red-flag record does not exist
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: Not Found
-                    example: 404
-                  error:
-                    type: string
-                    description: Error message
-                    example: red-flag record does not exist
+          description: Returned when admin tries to delete a record  or when user tries to edit another's red-flag record
+        
         '403':
           $ref: '#/components/responses/AdminForbiddenError'
+          
+        '404':
+          description: Red-flag record with specified id does not exist
+          
+  
+
+       
  
   '/red-flags/{red-flag-id}/location':
     patch:
@@ -370,7 +352,7 @@ paths:
                   
       responses:
         '200':
-          description: succesful location
+          description: succesful Operation
           content: 
             application/json:
               schema:
@@ -386,21 +368,15 @@ paths:
                       properties:
                         id:
                           $ref: '#/components/schemas/IncidentId'
-                        message:
+                        location:
+                          type: string
+                          example: (12.0000,34.000)
+                        success:
                           type: string
                           example: Updated red-flag location
         '400':
-          description: Bad Format location data
-          content:
-            application/json:
-              schema:
-                properties:
-                  status: 
-                    type: integer
-                    example: 400
-                  error:
-                    type: string
-                    example: 'latitude must be between -90 and 90 and longitude coordinates must be between -180 and 180'
+          description: Bad Format of location coordinates
+        
         '401':
           $ref: '#/components/responses/UnauthorizedError'
           
@@ -410,7 +386,7 @@ paths:
           
         '404':
           $ref: '#/components/responses/RedFlagNotFound'
-  
+        
   '/red-flags/{red-flag-id}/comment':
     patch:
       tags:
@@ -455,22 +431,16 @@ paths:
                       type: object
                       properties:
                         id:
-                          $ref: '#/components/schemas/IncidentId'
+                          type: string
+                          format: uuid
+                          
+                        comment:
+                          $ref: '#/components/schemas/IncidentComment'
                         success:
                           type: string
                           example: Updated red-flag comment
         '400':
           description: Bad Format comment data
-          content:
-            application/json:
-              schema:
-                properties:
-                  status: 
-                    type: integer
-                    example: 400
-                  error:
-                    type: string
-                    example: "Field must contain a minimum of 10 characters"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
           
@@ -524,31 +494,322 @@ paths:
                       type: object
                       properties:
                         id:
-                          $ref: '#/components/schemas/IncidentId'
-                        message:
+                          type: string
+                          format: uuid
+                        success:
                           type: string
                           example: Updated red-flag status
         '400':
-          description: Bad Format status data
+          description: Returned when the new status is neither 'Resolved' nor 'Under investigation' nor 'Rejected' 
+        
+        '401':
+          description: Returned when non admin user tries to access this endpoint or when access token is missing
+          
+        '404':
+          $ref: '#/components/responses/RedFlagNotFound'
+          
+  '/interventions':
+    get:
+      tags:
+        - interventions
+      summary: Fetch all intervention records.
+      description: >
+        Fetches interventions for a given user.
+        Admin can access records for all users whereas a user can only access their own intervention records.
+      operationId: getInterventions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+           application/json:
+            schema:
+              properties:
+                status:
+                  type: integer
+                  description: Not Found
+                  example: 200
+                data:
+                  $ref: '#/components/schemas/intervention'
+        
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+              
+              
+  '/interventions/{intervention-id}':
+    get:
+      tags:
+        - interventions
+      summary: Fetch a intervention record.
+      description: |
+        Fetches a intervention record for a given user.
+      operationId: get_a_intervention
+      parameters:
+        - name: intervention-id
+          in: path
+          description: ID of the intervention record you want to access
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+      responses:
+        '200':
+          description: Successful operation
           content:
             application/json:
               schema:
                 properties:
-                  status: 
+                  status:
                     type: integer
-                    example: 400
-                  error:
-                    type: string
-                    example: "Status must either be 'resolved','under investigation' or 'rejected'"
+                    description: Successful operation
+                    example: 200
+                  data:
+                    $ref: '#/components/schemas/intervention'
+        '400':
+          description: Invalid intervention ID
+       
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        
+        '404':
+          description: intervention record with specified id does not exist
+    delete:
+      tags:
+        -  interventions
+      summary: Delete a intervention record.
+      description: |
+        Deletes a intervention record for a given user.
+      operationId: delete_a_Intervention_record
+    
+      parameters:
+        - name: intervention-id
+          in: path
+          description: ID of the intervention record you want to delete
+          
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+  
+      responses:
+        '200':
+          description: Successfull Operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    description: status code
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        success:
+                          type: string
+                          example: intervention record has been deleted
+        '400':
+          description: Invalid intervention ID
+        '401':
+          description: Returned when admin tries to delete a record  or when user tries to edit another user's intervention record
+        
+        '403':
+          $ref: '#/components/responses/AdminForbiddenError'
+          
+        '404':
+          description: intervention record with specified id does not exist
+          
+  
+  
+       
+
+  '/interventions/{intervention-id}/location':
+    patch:
+      tags:
+        - interventions
+      summary: Edits location of a specific red flag record
+      description: > 
+        Only user who created the intervention record can edit the location of the Intervention.The user can only edit intervention record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.
+      operationId: edit_intervention_location
+      parameters:
+        - name: intervention-id
+          in: path
+          description: ID of the intervention record whose location you want to edit
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+          
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                location:
+                  $ref: '#/components/schemas/IncidentLocation'
+                  
+      responses:
+        '200':
+          description: succesful Operation
+          content: 
+            application/json:
+              schema:
+                properties:
+                  status:
+                      type: integer
+                      description: status code
+                      example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: '#/components/schemas/IncidentId'
+                        location:
+                          type: string
+                          example: (12.0000,34.000)
+                        success:
+                          type: string
+                          example: Updated intervention location
+        '400':
+          description: Bad Format of location coordinates
+        
         '401':
           $ref: '#/components/responses/UnauthorizedError'
           
         '403':
-            $ref: '#/components/responses/NonAdminForbiddenError'
+          description: >
+            Returned when admin tries to access endpoint or when user tries to edit another user's resource.
           
         '404':
-          $ref: '#/components/responses/RedFlagNotFound'
+          $ref: '#/components/responses/InterventionNotFound'
+        
+  '/interventions/{intervention-id}/comment':
+    patch:
+      tags:
+        - interventions
+      summary: Edits comment of a specific red flag record
+      description: > 
+        Only user who created the intervention record can edit the comment of the Intervention.The user can only edit intervention record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.
+      operationId: edit_intervention_comment
+      parameters:
+        - name: intervention-id
+          in: path
+          description: ID of the intervention record whose comment you want to edit
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+          
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                comment:
+                  $ref: '#/components/schemas/IncidentComment'
+                  
+      responses:
+        '200':
+          description: succesful Operation
+          content: 
+            application/json:
+              schema:
+                properties:
+                  status:
+                      type: integer
+                      description: status code
+                      example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          
+                        comment:
+                          $ref: '#/components/schemas/IncidentComment'
+                        success:
+                          type: string
+                          example: Updated intervention comment
+        '400':
+          description: Bad Format comment data
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+        '403':
+            $ref: '#/components/responses/AdminForbiddenError'
+          
+        '404':
+          $ref: '#/components/responses/InterventionNotFound' 
   
+  '/interventions/{intervention-id}/status':
+    patch:
+      tags:
+        - interventions
+      summary: Edits status of a specific red flag record
+      description: > 
+        Only admin can access this route
+      operationId: edit_intervention_status
+      parameters:
+        - name: intervention-id
+          in: path
+          description: ID of the intervention record whose status you want to edit
+          required: true
+          schema:
+            $ref: '#/components/schemas/IncidentId'
+          
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                status:
+                  $ref: '#/components/schemas/IncidentStatus'
+                  
+      responses:
+        '200':
+          description: successful Operation
+          content: 
+            application/json:
+              schema:
+                properties:
+                  status:
+                      type: integer
+                      description: status code
+                      example: 200
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        success:
+                          type: string
+                          example: Updated intervention status
+        '400':
+          description: Returned when the new status is neither 'Resolved' nor 'Under investigation' nor 'Rejected' 
+        
+        '401':
+          description: Returned when non admin user tries to access this endpoint or when access token is missing
+          
+        '404':
+          $ref: '#/components/responses/InterventionNotFound'
+    
 components:
 
       
@@ -600,6 +861,42 @@ components:
           type: string
           description: Can either be red-flag or intervention
           example: red-flag
+        Videos:
+          type: string
+          description: Video URLS
+          example:
+            - vid1.mp4
+            - vid2.mp4
+        Images:
+          type: string
+          description: image URLS
+          example:
+            - image1.jpg
+            - image2.jpg
+    intervention:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/IncidentId'
+        title:
+          $ref: '#/components/schemas/IncidentTitle'
+        comment:
+          $ref: '#/components/schemas/IncidentComment'
+        location:
+          $ref: '#/components/schemas/IncidentLocation'
+        created_on:
+          type: string
+          description: Date when record was created
+          example: 'Thu, 03 Jan 2019 00:00:00 GMT'
+        createdby:
+          $ref: '#/components/schemas/created_by'
+          
+        status:
+          $ref: '#/components/schemas/IncidentStatus'
+        type:
+          type: string
+          description: intervention
+          example: intervention
         Videos:
           type: string
           description: Video URLS
@@ -680,12 +977,11 @@ components:
   
 
 
-          
     IncidentId:
       additionalProperties:
-        description: Unique reference to the Redflag Record
-        type: integer
-        example: 1
+        description: Unique reference to the incident Record
+        type: string
+        format: uuid
         
     IncidentLocation:
         type: array
@@ -719,7 +1015,7 @@ components:
     created_by:
       type: string
       description: Id of user who created the record
-      example: 2
+      format: uuid
 
 
     
@@ -748,16 +1044,10 @@ components:
        description: Returned when new user data has wrong field keys.
      
     RedFlagNotFound:
-      description: red-flag record does not exist
-      content:
-        application/json:
-          schema:
-            properties:
-              error:
-                type: string
-                example: red-flag record does not exist
-              status:
-                type: integer
-                example: 404
+      description: Red-flag record with specified id does not exist
+      
+    InterventionNotFound:
+      description: Intervention record with specified id does not exist
+     
 security:
   - bearerAuth: []
