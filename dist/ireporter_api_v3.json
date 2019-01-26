@@ -629,7 +629,7 @@ paths:
     patch:
       tags:
         - interventions
-      summary: Edits location of a specific red flag record
+      summary: Edits location of a specific intervention record
       description: > 
         Only user who created the intervention record can edit the location of the Intervention.The user can only edit intervention record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.
       operationId: edit_intervention_location
@@ -693,7 +693,7 @@ paths:
     patch:
       tags:
         - interventions
-      summary: Edits comment of a specific red flag record
+      summary: Edits comment of a specific intervention record
       description: > 
         Only user who created the intervention record can edit the comment of the Intervention.The user can only edit intervention record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.
       operationId: edit_intervention_comment
@@ -756,7 +756,7 @@ paths:
     patch:
       tags:
         - interventions
-      summary: Edits status of a specific red flag record
+      summary: Edits status of a specific intervention record
       description: > 
         Only admin can access this route
       operationId: edit_intervention_status
