@@ -1549,26 +1549,6 @@
         }
       }
     },
-    "responses" : {
-      "UnauthorizedError" : {
-        "description" : "Access token is missing or invalid"
-      },
-      "AdminForbiddenError" : {
-        "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
-      },
-      "NonAdminForbiddenError" : {
-        "description" : "Returned when non admin user tries to access this endpoint"
-      },
-      "AuthDataKeyError" : {
-        "description" : "Returned when new user data has wrong field keys."
-      },
-      "RedFlagNotFound" : {
-        "description" : "Red-flag record with specified id does not exist"
-      },
-      "InterventionNotFound" : {
-        "description" : "Intervention record with specified id does not exist"
-      }
-    },
     "securitySchemes" : {
       "bearerAuth" : {
         "type" : "http",
