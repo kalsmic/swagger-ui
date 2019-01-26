@@ -1,1053 +1,1414 @@
-openapi: 3.0.0
-info:
-  version: v3
-  title: IReporter API
-  description: >-
-    Corruption is a huge bane to Africa’s development. African countries must
-    develop novel and localised solutions that will curb this menace, hence the
-    birth of iReporter. iReporter enables any/every citizen to bring any form of
-    corruption to the notice of appropriate authorities and the general public.
-    Users can also report on things that needs government intervention
-  contact:
-    name: Kalule Arthur
-    email: kalulearthur@gmail.com
-servers:
-# Added by API Auto Mocking Plugin
-  - description: Ireporter API DEV
-    url: 'https://ireporterapiv3.herokuapp.com/api/v3'
-paths:
-  '/auth/signup':
-    post:
-      tags:
-        - User
-      summary: Creates a new user
-      description: >
-        This endpoint creates a new user account. The admin user account is in
-        the system by default and therefore new users are not admin users.
-      operationId: register_user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewUser'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    example: 201
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        user:
-                          $ref: '#/components/schemas/User'
-                       
-                        token: 
-                          type: string
-                          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOiI5MDI3NDk0Yy00MjFmLTQwMjItOTMxOC0wNjI4MzYzYTFkMjUiLCJpYXQiOjE1NDY5NDQ0MjEsImV4cCI6MTU0Njk1NTIyMX0.72QEK83GnyzUoDNNaEI3WCxhj3afz-ManTEjCmP_uTE"
-                  
-                        message:
-                          type: string
-                          example: Account created Successfully
-        
-        '400':
-          description: >
-            Returns an error as a dictionary with invalid fieldnames as keys and
-            the corresponding specific error as the values for each invalid
-            field
-
-                    
-        '409':
-          description: |
-            Returned when new user details contain duplicate username, phone number or  email.
-                 
-         
-        '422':
-          $ref: '#/components/responses/AuthDataKeyError'
-          
-  '/auth/login':
-    post:
-      tags:
-        - User
-      summary: Logs in a user
-      description: >
-        This endpoint logs in a user. To login as admin, use username - "admin", password - "iReporter123".
-      operationId: login_user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                username:
-                  type: string
-                  example: admin
-                password:
-                  type: string
-                  example: iReporter123
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        token: 
-                          type: string
-                          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOiI5MDI3NDk0Yy00MjFmLTQwMjItOTMxOC0wNjI4MzYzYTFkMjUiLCJpYXQiOjE1NDY5NDQ0MjEsImV4cCI6MTU0Njk1NTIyMX0.72QEK83GnyzUoDNNaEI3WCxhj3afz-ManTEjCmP_uTE"
-                  
-                        success:
-                          type: string
-                          example: Logged in successfully
-        
-        '400':
-          description: >
-            Returns an error as a dictionary with invalid fieldnames as keys and
-            the corresponding specific error as the values for each invalid
-            field
-
-        '401':
-          description: Wrong username or password.
-          
-        '422':
-          $ref: '#/components/responses/AuthDataKeyError'
-   
-     
-  '/incidents':
-    post:
-      
-      tags:
-        - Red-flags / Interventions
-        
-      summary: Creates a new Red-flag or intervention record
-      operationId: create_an_incident_record
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                title:
-                  $ref: '#/components/schemas/IncidentTitle'
-                comment:
-                  $ref: '#/components/schemas/IncidentComment'
-                type:
-                  type: string
-                  description: Can either be red-flag or intervention
-                  example: red-flag
-                location:
-                  type: array
-                  description: Where the incident took place. It contains latitude and longitude coordinates
-                  minItems: 2
-                  maxItems: 2
-                  example:
-                    - 43.000000
-                    - 144.400000
-                Videos:
-                  type: array
-                  description: Video URLS
-                  example:
-                    - vid1.mp4
-                    - vid2.mp4
-                Images:
-                  type: array
-                  description: image URLS
-                  example:
-                    - image1.jpg
-                    - image2.jpg
-              
-                    
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    example: 201
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        red-flag:
-                          $ref: '#/components/schemas/Red-flag'
-                        success:
-                          type: string
-                          example: Created red-flag record
-        '400':
-          description: >
-            Returns an error as a dictionary with invalid fieldnames as keys and
-            the corresponding specific error as the values for each invalid
-            field
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
- 
-  
-  '/red-flags':
-    get:
-      tags:
-        - Red-flags
-      summary: Fetch all Red-flag records.
-      description: >
-        Fetches red-flags for a given user.
-        Admin can access records for all users whereas a user can only access their own Red-flag records.
-      operationId: getRedFlags
-      responses:
-        '200':
-          description: Successful operation
-          content:
-           application/json:
-            schema:
-              properties:
-                status:
-                  type: integer
-                  description: Not Found
-                  example: 200
-                data:
-                  $ref: '#/components/schemas/Red-flag'
-        
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-              
-                
-  '/red-flags/{red-flag-id}':
-    get:
-      tags:
-        - Red-flags
-      summary: Fetch a Red-flag record.
-      description: |
-        Fetches a red-flag record for a given user.
-      operationId: get_a_Red-Flag
-      parameters:
-        - name: red-flag-id
-          in: path
-          description: ID of the Red-flag record you want to access
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            # application/json:
-              # schema:
-                # $ref: '#/components/schemas/IncidentId'
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: Successful operation
-                    example: 200
-                  data:
-                    $ref: '#/components/schemas/Red-flag'
-        '400':
-          description: Invalid Red-flag ID
-         
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
-        '404':
-          description: Red-flag record with specified id does not exist
-    delete:
-      tags:
-        -  Red-flags
-      summary: Delete a red-flag record.
-      description: |
-        Deletes a red-flag record for a given user.
-      operationId: delete_a_redflag_record
-    
-      parameters:
-        - name: red-flag-id
-          in: path
-          description: ID of the Red-flag record you want to delete
-          
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
- 
-      responses:
-        '200':
-          description: Successfull Operation
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: status code
-                    example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                        success:
-                          type: string
-                          example: red-flag record has been deleted
-        '400':
-          description: Invalid Red-flag ID
-        '401':
-          description: Returned when admin tries to delete a record  or when user tries to edit another's red-flag record
-        
-        '403':
-          $ref: '#/components/responses/AdminForbiddenError'
-          
-        '404':
-          description: Red-flag record with specified id does not exist
-          
-  
-
-       
- 
-  '/red-flags/{red-flag-id}/location':
-    patch:
-      tags:
-        - Red-flags
-      summary: Edits location of a specific red flag record
-      description: > 
-        Only user who created the Red-flag record can edit the location of the redflag.The user can only edit Red-flag record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.
-      operationId: edit_red_flag_location
-      parameters:
-        - name: red-flag-id
-          in: path
-          description: ID of the Red-flag record whose location you want to edit
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-          
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                location:
-                  $ref: '#/components/schemas/IncidentLocation'
-                  
-      responses:
-        '200':
-          description: succesful Operation
-          content: 
-            application/json:
-              schema:
-                properties:
-                  status:
-                      type: integer
-                      description: status code
-                      example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          $ref: '#/components/schemas/IncidentId'
-                        location:
-                          type: string
-                          example: (12.0000,34.000)
-                        success:
-                          type: string
-                          example: Updated red-flag location
-        '400':
-          description: Bad Format of location coordinates
-        
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
-        '403':
-          description: >
-            Returned when admin tries to access endpoint or when user tries to edit another user's resource.
-          
-        '404':
-          $ref: '#/components/responses/RedFlagNotFound'
-        
-  '/red-flags/{red-flag-id}/comment':
-    patch:
-      tags:
-        - Red-flags
-      summary: Edits comment of a specific red flag record
-      description: > 
-        Only user who created the Red-flag record can edit the comment of the redflag.The user can only edit Red-flag record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.
-      operationId: edit_red_flag_comment
-      parameters:
-        - name: red-flag-id
-          in: path
-          description: ID of the Red-flag record whose comment you want to edit
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-          
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                comment:
-                  $ref: '#/components/schemas/IncidentComment'
-                  
-      responses:
-        '200':
-          description: succesful Operation
-          content: 
-            application/json:
-              schema:
-                properties:
-                  status:
-                      type: integer
-                      description: status code
-                      example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                          
-                        comment:
-                          $ref: '#/components/schemas/IncidentComment'
-                        success:
-                          type: string
-                          example: Updated red-flag comment
-        '400':
-          description: Bad Format comment data
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
-        '403':
-            $ref: '#/components/responses/AdminForbiddenError'
-          
-        '404':
-          $ref: '#/components/responses/RedFlagNotFound' 
-  
-  '/red-flags/{red-flag-id}/status':
-    patch:
-      tags:
-        - Red-flags
-      summary: Edits status of a specific red flag record
-      description: > 
-        Only admin can access this route
-      operationId: edit_red_flag_status
-      parameters:
-        - name: red-flag-id
-          in: path
-          description: ID of the Red-flag record whose status you want to edit
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-          
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                status:
-                  $ref: '#/components/schemas/IncidentStatus'
-                  
-      responses:
-        '200':
-          description: successful Operation
-          content: 
-            application/json:
-              schema:
-                properties:
-                  status:
-                      type: integer
-                      description: status code
-                      example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                        success:
-                          type: string
-                          example: Updated red-flag status
-        '400':
-          description: Returned when the new status is neither 'Resolved' nor 'Under investigation' nor 'Rejected' 
-        
-        '401':
-          description: Returned when non admin user tries to access this endpoint or when access token is missing
-          
-        '404':
-          $ref: '#/components/responses/RedFlagNotFound'
-          
-  '/interventions':
-    get:
-      tags:
-        - interventions
-      summary: Fetch all intervention records.
-      description: >
-        Fetches interventions for a given user.
-        Admin can access records for all users whereas a user can only access their own intervention records.
-      operationId: getInterventions
-      responses:
-        '200':
-          description: Successful operation
-          content:
-           application/json:
-            schema:
-              properties:
-                status:
-                  type: integer
-                  description: Not Found
-                  example: 200
-                data:
-                  $ref: '#/components/schemas/intervention'
-        
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-              
-              
-  '/interventions/{intervention-id}':
-    get:
-      tags:
-        - interventions
-      summary: Fetch a intervention record.
-      description: |
-        Fetches a intervention record for a given user.
-      operationId: get_a_intervention
-      parameters:
-        - name: intervention-id
-          in: path
-          description: ID of the intervention record you want to access
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: Successful operation
-                    example: 200
-                  data:
-                    $ref: '#/components/schemas/intervention'
-        '400':
-          description: Invalid intervention ID
-       
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        
-        '404':
-          description: intervention record with specified id does not exist
-    delete:
-      tags:
-        -  interventions
-      summary: Delete a intervention record.
-      description: |
-        Deletes a intervention record for a given user.
-      operationId: delete_a_Intervention_record
-    
-      parameters:
-        - name: intervention-id
-          in: path
-          description: ID of the intervention record you want to delete
-          
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-  
-      responses:
-        '200':
-          description: Successfull Operation
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    type: integer
-                    description: status code
-                    example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                        success:
-                          type: string
-                          example: intervention record has been deleted
-        '400':
-          description: Invalid intervention ID
-        '401':
-          description: Returned when admin tries to delete a record  or when user tries to edit another user's intervention record
-        
-        '403':
-          $ref: '#/components/responses/AdminForbiddenError'
-          
-        '404':
-          description: intervention record with specified id does not exist
-          
-  
-  
-       
-
-  '/interventions/{intervention-id}/location':
-    patch:
-      tags:
-        - interventions
-      summary: Edits location of a specific intervention record
-      description: > 
-        Only user who created the intervention record can edit the location of the Intervention.The user can only edit intervention record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.
-      operationId: edit_intervention_location
-      parameters:
-        - name: intervention-id
-          in: path
-          description: ID of the intervention record whose location you want to edit
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-          
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                location:
-                  $ref: '#/components/schemas/IncidentLocation'
-                  
-      responses:
-        '200':
-          description: succesful Operation
-          content: 
-            application/json:
-              schema:
-                properties:
-                  status:
-                      type: integer
-                      description: status code
-                      example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          $ref: '#/components/schemas/IncidentId'
-                        location:
-                          type: string
-                          example: (12.0000,34.000)
-                        success:
-                          type: string
-                          example: Updated intervention location
-        '400':
-          description: Bad Format of location coordinates
-        
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
-        '403':
-          description: >
-            Returned when admin tries to access endpoint or when user tries to edit another user's resource.
-          
-        '404':
-          $ref: '#/components/responses/InterventionNotFound'
-        
-  '/interventions/{intervention-id}/comment':
-    patch:
-      tags:
-        - interventions
-      summary: Edits comment of a specific intervention record
-      description: > 
-        Only user who created the intervention record can edit the comment of the Intervention.The user can only edit intervention record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.
-      operationId: edit_intervention_comment
-      parameters:
-        - name: intervention-id
-          in: path
-          description: ID of the intervention record whose comment you want to edit
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-          
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                comment:
-                  $ref: '#/components/schemas/IncidentComment'
-                  
-      responses:
-        '200':
-          description: succesful Operation
-          content: 
-            application/json:
-              schema:
-                properties:
-                  status:
-                      type: integer
-                      description: status code
-                      example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                          
-                        comment:
-                          $ref: '#/components/schemas/IncidentComment'
-                        success:
-                          type: string
-                          example: Updated intervention comment
-        '400':
-          description: Bad Format comment data
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-          
-        '403':
-            $ref: '#/components/responses/AdminForbiddenError'
-          
-        '404':
-          $ref: '#/components/responses/InterventionNotFound' 
-  
-  '/interventions/{intervention-id}/status':
-    patch:
-      tags:
-        - interventions
-      summary: Edits status of a specific intervention record
-      description: > 
-        Only admin can access this route
-      operationId: edit_intervention_status
-      parameters:
-        - name: intervention-id
-          in: path
-          description: ID of the intervention record whose status you want to edit
-          required: true
-          schema:
-            $ref: '#/components/schemas/IncidentId'
-          
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                status:
-                  $ref: '#/components/schemas/IncidentStatus'
-                  
-      responses:
-        '200':
-          description: successful Operation
-          content: 
-            application/json:
-              schema:
-                properties:
-                  status:
-                      type: integer
-                      description: status code
-                      example: 200
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                        success:
-                          type: string
-                          example: Updated intervention status
-        '400':
-          description: Returned when the new status is neither 'Resolved' nor 'Under investigation' nor 'Rejected' 
-        
-        '401':
-          description: Returned when non admin user tries to access this endpoint or when access token is missing
-          
-        '404':
-          $ref: '#/components/responses/InterventionNotFound'
-    
-components:
-
-      
-
-  schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          
-   
-        firstname:
-          $ref: '#/components/schemas/UserFirstName'
-        lastname:
-          $ref: '#/components/schemas/UserLastName'
-        othernames:
-          $ref: '#/components/schemas/UserOtherNames'
-        email:
-          $ref: '#/components/schemas/UserEmail'
-        password:
-          $ref: '#/components/schemas/UserPassword'
-        username:
-          $ref: '#/components/schemas/UserName'
-        phoneNumber:
-          $ref: '#/components/schemas/UserPhoneNumber'
-   
-          
-      
-    Red-flag:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/IncidentId'
-        title:
-          $ref: '#/components/schemas/IncidentTitle'
-        comment:
-          $ref: '#/components/schemas/IncidentComment'
-        location:
-          $ref: '#/components/schemas/IncidentLocation'
-        created_on:
-          type: string
-          description: Date when record was created
-          example: 'Thu, 03 Jan 2019 00:00:00 GMT'
-        status:
-          $ref: '#/components/schemas/IncidentStatus'
-        type:
-          type: string
-          description: Can either be red-flag or intervention
-          example: red-flag
-        Videos:
-          type: string
-          description: Video URLS
-          example:
-            - vid1.mp4
-            - vid2.mp4
-        Images:
-          type: string
-          description: image URLS
-          example:
-            - image1.jpg
-            - image2.jpg
-    intervention:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/IncidentId'
-        title:
-          $ref: '#/components/schemas/IncidentTitle'
-        comment:
-          $ref: '#/components/schemas/IncidentComment'
-        location:
-          $ref: '#/components/schemas/IncidentLocation'
-        created_on:
-          type: string
-          description: Date when record was created
-          example: 'Thu, 03 Jan 2019 00:00:00 GMT'
-        createdby:
-          $ref: '#/components/schemas/created_by'
-          
-        status:
-          $ref: '#/components/schemas/IncidentStatus'
-        type:
-          type: string
-          description: intervention
-          example: intervention
-        Videos:
-          type: string
-          description: Video URLS
-          example:
-            - vid1.mp4
-            - vid2.mp4
-        Images:
-          type: string
-          description: image URLS
-          example:
-            - image1.jpg
-            - image2.jpg
-      
-          
-    
-    NewUser:
-      type: object
-      properties:
-        
-        firstname:
-          $ref: '#/components/schemas/UserFirstName'
-        lastname:
-          $ref: '#/components/schemas/UserLastName'
-        othernames:
-          $ref: '#/components/schemas/UserOtherNames'
-        email:
-          $ref: '#/components/schemas/UserEmail'
-        password:
-          $ref: '#/components/schemas/UserPassword'
-        username:
-          $ref: '#/components/schemas/UserName'
-        phoneNumber:
-          $ref: '#/components/schemas/UserPhoneNumber'
-          
-    
-
-   
-          
-    UserFirstName:
-      type: string
-      description: The first name of new user
-      example: Arthur
-    UserLastName:
-      type: string
-      description: The last name of the new user
-      example: Kalule
-    UserOtherNames:
-      type: string
-      description: The other names of the new user
-      example: Gerald
-    UserPhoneNumber:
-      type: string
-      description: Phonenumber must have a maximum of ten digits
-      minLength: 10
-      maxLength: 10
-      example: 0772019937
-    UserName:
-      type: string
-      description: >
-        Username may contain numbers and should be atleast 5 characters
-        long.
-      minLength: 4
-      example: kalsmic
-      
-    UserPassword:
-      type: string
-      description: >
-        The password should be 8 characters long and must include atleast
-        one upper case character, atleast one lower case character and
-        atleast one digit character
-      format: password
-      example: Password123
-    UserEmail:
-      type: string
-      description: The email address of the user
-      format: email
-      example: kalulearthur@gmail.com
-  
-
-
-    IncidentId:
-      additionalProperties:
-        description: Unique reference to the incident Record
-        type: string
-        format: uuid
-        
-    IncidentLocation:
-        type: array
-        description: Where the incident took place. It contains latitude and longitude coordinates
-        minItems: 2
-        maxItems: 2
-        example:
-          - 43.000000
-          - 144.400000
-      
-    IncidentStatus:
-      type: string
-      description: >
-        Redflag status can either be Draft, Under investigation,Resolved or
-        Rejected
-      example: Resolved
-      
-    IncidentComment:
-      description: A Description of what happened
-      type: string
-      minLength: 10
-      example: Lorem ipsum eiusmod temport labore et dolore magna
-      
-    IncidentTitle:
-      description: What the Incident is about
-      type: string
-      minLength: 4
-      maxLength: 100
-      example: Lorem ipsum magna
-   
-    created_by:
-      type: string
-      description: Id of user who created the record
-      format: uuid
-
-
-    
-      
-     
-   
-      
- 
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
-    AdminForbiddenError:
-      description: 
-            Returned when admin tries to access endpoint or when user tries to edit another user's resource.
-      
-    NonAdminForbiddenError:
-      description: Returned when non admin user tries to access this endpoint
-     
-  
-    AuthDataKeyError:
-       description: Returned when new user data has wrong field keys.
-     
-    RedFlagNotFound:
-      description: Red-flag record with specified id does not exist
-      
-    InterventionNotFound:
-      description: Intervention record with specified id does not exist
-     
-security:
-  - bearerAuth: []
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "IReporter API",
+    "description" : "Corruption is a huge bane to Africa’s development. African countries must develop novel and localised solutions that will curb this menace, hence the birth of iReporter. iReporter enables any/every citizen to bring any form of corruption to the notice of appropriate authorities and the general public. Users can also report on things that needs government intervention",
+    "contact" : {
+      "name" : "Kalule Arthur",
+      "email" : "kalulearthur@gmail.com"
+    },
+    "version" : "v3"
+  },
+  "servers" : [ {
+    "url" : "https://ireporterapiv3.herokuapp.com/api/v3",
+    "description" : "Ireporter API DEV"
+  } ],
+  "security" : [ {
+    "bearerAuth" : [ ]
+  } ],
+  "paths" : {
+    "/auth/signup" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Creates a new user",
+        "description" : "This endpoint creates a new user account. The admin user account is in the system by default and therefore new users are not admin users.\n",
+        "operationId" : "register_user",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/NewUser"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Returns an error as a dictionary with invalid fieldnames as keys and the corresponding specific error as the values for each invalid field\n\n        \n"
+          },
+          "409" : {
+            "description" : "Returned when new user details contain duplicate username, phone number or  email.\n     \n"
+          },
+          "422" : {
+            "description" : "Returned when new user data has wrong field keys."
+          }
+        }
+      }
+    },
+    "/auth/login" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Logs in a user",
+        "description" : "This endpoint logs in a user. To login as admin, use username - \"admin\", password - \"iReporter123\".\n",
+        "operationId" : "login_user",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Returns an error as a dictionary with invalid fieldnames as keys and the corresponding specific error as the values for each invalid field\n"
+          },
+          "401" : {
+            "description" : "Wrong username or password."
+          },
+          "422" : {
+            "description" : "Returned when new user data has wrong field keys."
+          }
+        }
+      }
+    },
+    "/incidents" : {
+      "post" : {
+        "tags" : [ "Red-flags / Interventions" ],
+        "summary" : "Creates a new Red-flag or intervention record",
+        "operationId" : "create_an_incident_record",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_1"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201_1"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Returns an error as a dictionary with invalid fieldnames as keys and the corresponding specific error as the values for each invalid field\n"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/red-flags" : {
+      "get" : {
+        "tags" : [ "Red-flags" ],
+        "summary" : "Fetch all Red-flag records.",
+        "description" : "Fetches red-flags for a given user. Admin can access records for all users whereas a user can only access their own Red-flag records.\n",
+        "operationId" : "getRedFlags",
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          }
+        }
+      }
+    },
+    "/red-flags/{red-flag-id}" : {
+      "get" : {
+        "tags" : [ "Red-flags" ],
+        "summary" : "Fetch a Red-flag record.",
+        "description" : "Fetches a red-flag record for a given user.\n",
+        "operationId" : "get_a_Red-Flag",
+        "parameters" : [ {
+          "name" : "red-flag-id",
+          "in" : "path",
+          "description" : "ID of the Red-flag record you want to access",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_2"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid Red-flag ID"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          },
+          "404" : {
+            "description" : "Red-flag record with specified id does not exist"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Red-flags" ],
+        "summary" : "Delete a red-flag record.",
+        "description" : "Deletes a red-flag record for a given user.\n",
+        "operationId" : "delete_a_redflag_record",
+        "parameters" : [ {
+          "name" : "red-flag-id",
+          "in" : "path",
+          "description" : "ID of the Red-flag record you want to delete",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successfull Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid Red-flag ID"
+          },
+          "401" : {
+            "description" : "Returned when admin tries to delete a record  or when user tries to edit another's red-flag record"
+          },
+          "403" : {
+            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+          },
+          "404" : {
+            "description" : "Red-flag record with specified id does not exist"
+          }
+        }
+      }
+    },
+    "/red-flags/{red-flag-id}/location" : {
+      "patch" : {
+        "tags" : [ "Red-flags" ],
+        "summary" : "Edits location of a specific red flag record",
+        "description" : "Only user who created the Red-flag record can edit the location of the redflag.The user can only edit Red-flag record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.\n",
+        "operationId" : "edit_red_flag_location",
+        "parameters" : [ {
+          "name" : "red-flag-id",
+          "in" : "path",
+          "description" : "ID of the Red-flag record whose location you want to edit",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "succesful Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_4"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Format of location coordinates"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          },
+          "403" : {
+            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource.\n"
+          },
+          "404" : {
+            "description" : "Red-flag record with specified id does not exist"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/red-flags/{red-flag-id}/comment" : {
+      "patch" : {
+        "tags" : [ "Red-flags" ],
+        "summary" : "Edits comment of a specific red flag record",
+        "description" : "Only user who created the Red-flag record can edit the comment of the redflag.The user can only edit Red-flag record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.\n",
+        "operationId" : "edit_red_flag_comment",
+        "parameters" : [ {
+          "name" : "red-flag-id",
+          "in" : "path",
+          "description" : "ID of the Red-flag record whose comment you want to edit",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_3"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "succesful Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_5"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Format comment data"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          },
+          "403" : {
+            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+          },
+          "404" : {
+            "description" : "Red-flag record with specified id does not exist"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/red-flags/{red-flag-id}/status" : {
+      "patch" : {
+        "tags" : [ "Red-flags" ],
+        "summary" : "Edits status of a specific red flag record",
+        "description" : "Only admin can access this route\n",
+        "operationId" : "edit_red_flag_status",
+        "parameters" : [ {
+          "name" : "red-flag-id",
+          "in" : "path",
+          "description" : "ID of the Red-flag record whose status you want to edit",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_4"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_6"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Returned when the new status is neither 'Resolved' nor 'Under investigation' nor 'Rejected'"
+          },
+          "401" : {
+            "description" : "Returned when non admin user tries to access this endpoint or when access token is missing"
+          },
+          "404" : {
+            "description" : "Red-flag record with specified id does not exist"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/interventions" : {
+      "get" : {
+        "tags" : [ "interventions" ],
+        "summary" : "Fetch all intervention records.",
+        "description" : "Fetches interventions for a given user. Admin can access records for all users whereas a user can only access their own intervention records.\n",
+        "operationId" : "getInterventions",
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_7"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          }
+        }
+      }
+    },
+    "/interventions/{intervention-id}" : {
+      "get" : {
+        "tags" : [ "interventions" ],
+        "summary" : "Fetch a intervention record.",
+        "description" : "Fetches a intervention record for a given user.\n",
+        "operationId" : "get_a_intervention",
+        "parameters" : [ {
+          "name" : "intervention-id",
+          "in" : "path",
+          "description" : "ID of the intervention record you want to access",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_8"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid intervention ID"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          },
+          "404" : {
+            "description" : "intervention record with specified id does not exist"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "interventions" ],
+        "summary" : "Delete a intervention record.",
+        "description" : "Deletes a intervention record for a given user.\n",
+        "operationId" : "delete_a_Intervention_record",
+        "parameters" : [ {
+          "name" : "intervention-id",
+          "in" : "path",
+          "description" : "ID of the intervention record you want to delete",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successfull Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_9"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid intervention ID"
+          },
+          "401" : {
+            "description" : "Returned when admin tries to delete a record  or when user tries to edit another user's intervention record"
+          },
+          "403" : {
+            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+          },
+          "404" : {
+            "description" : "intervention record with specified id does not exist"
+          }
+        }
+      }
+    },
+    "/interventions/{intervention-id}/location" : {
+      "patch" : {
+        "tags" : [ "interventions" ],
+        "summary" : "Edits location of a specific intervention record",
+        "description" : "Only user who created the intervention record can edit the location of the Intervention.The user can only edit intervention record's location when its status is yet to be marked as either  under investigation, rejected, or resolved.\n",
+        "operationId" : "edit_intervention_location",
+        "parameters" : [ {
+          "name" : "intervention-id",
+          "in" : "path",
+          "description" : "ID of the intervention record whose location you want to edit",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_5"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "succesful Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_10"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Format of location coordinates"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          },
+          "403" : {
+            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource.\n"
+          },
+          "404" : {
+            "description" : "Intervention record with specified id does not exist"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/interventions/{intervention-id}/comment" : {
+      "patch" : {
+        "tags" : [ "interventions" ],
+        "summary" : "Edits comment of a specific intervention record",
+        "description" : "Only user who created the intervention record can edit the comment of the Intervention.The user can only edit intervention record's comment when its status is yet to be marked as either  under investigation, rejected, or resolved.\n",
+        "operationId" : "edit_intervention_comment",
+        "parameters" : [ {
+          "name" : "intervention-id",
+          "in" : "path",
+          "description" : "ID of the intervention record whose comment you want to edit",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_6"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "succesful Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_11"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Format comment data"
+          },
+          "401" : {
+            "description" : "Access token is missing or invalid"
+          },
+          "403" : {
+            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+          },
+          "404" : {
+            "description" : "Intervention record with specified id does not exist"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/interventions/{intervention-id}/status" : {
+      "patch" : {
+        "tags" : [ "interventions" ],
+        "summary" : "Edits status of a specific intervention record",
+        "description" : "Only admin can access this route\n",
+        "operationId" : "edit_intervention_status",
+        "parameters" : [ {
+          "name" : "intervention-id",
+          "in" : "path",
+          "description" : "ID of the intervention record whose status you want to edit",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_7"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful Operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_12"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Returned when the new status is neither 'Resolved' nor 'Under investigation' nor 'Rejected'"
+          },
+          "401" : {
+            "description" : "Returned when non admin user tries to access this endpoint or when access token is missing"
+          },
+          "404" : {
+            "description" : "Intervention record with specified id does not exist"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "User" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "firstname" : {
+            "$ref" : "#/components/schemas/UserFirstName"
+          },
+          "lastname" : {
+            "$ref" : "#/components/schemas/UserLastName"
+          },
+          "othernames" : {
+            "$ref" : "#/components/schemas/UserOtherNames"
+          },
+          "email" : {
+            "$ref" : "#/components/schemas/UserEmail"
+          },
+          "password" : {
+            "$ref" : "#/components/schemas/UserPassword"
+          },
+          "username" : {
+            "$ref" : "#/components/schemas/UserName"
+          },
+          "phoneNumber" : {
+            "$ref" : "#/components/schemas/UserPhoneNumber"
+          }
+        }
+      },
+      "Red-flag" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/IncidentTitle"
+          },
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          },
+          "location" : {
+            "$ref" : "#/components/schemas/IncidentLocation"
+          },
+          "created_on" : {
+            "type" : "string",
+            "description" : "Date when record was created",
+            "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/IncidentStatus"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Can either be red-flag or intervention",
+            "example" : "red-flag"
+          },
+          "Videos" : {
+            "type" : "string",
+            "description" : "Video URLS",
+            "example" : "[vid1.mp4, vid2.mp4]"
+          },
+          "Images" : {
+            "type" : "string",
+            "description" : "image URLS",
+            "example" : "[image1.jpg, image2.jpg]"
+          }
+        }
+      },
+      "intervention" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/IncidentTitle"
+          },
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          },
+          "location" : {
+            "$ref" : "#/components/schemas/IncidentLocation"
+          },
+          "created_on" : {
+            "type" : "string",
+            "description" : "Date when record was created",
+            "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
+          },
+          "createdby" : {
+            "$ref" : "#/components/schemas/created_by"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/IncidentStatus"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "intervention",
+            "example" : "intervention"
+          },
+          "Videos" : {
+            "type" : "string",
+            "description" : "Video URLS",
+            "example" : "[vid1.mp4, vid2.mp4]"
+          },
+          "Images" : {
+            "type" : "string",
+            "description" : "image URLS",
+            "example" : "[image1.jpg, image2.jpg]"
+          }
+        }
+      },
+      "NewUser" : {
+        "type" : "object",
+        "properties" : {
+          "firstname" : {
+            "$ref" : "#/components/schemas/UserFirstName"
+          },
+          "lastname" : {
+            "$ref" : "#/components/schemas/UserLastName"
+          },
+          "othernames" : {
+            "$ref" : "#/components/schemas/UserOtherNames"
+          },
+          "email" : {
+            "$ref" : "#/components/schemas/UserEmail"
+          },
+          "password" : {
+            "$ref" : "#/components/schemas/UserPassword"
+          },
+          "username" : {
+            "$ref" : "#/components/schemas/UserName"
+          },
+          "phoneNumber" : {
+            "$ref" : "#/components/schemas/UserPhoneNumber"
+          }
+        }
+      },
+      "UserFirstName" : {
+        "type" : "string",
+        "description" : "The first name of new user",
+        "example" : "Arthur"
+      },
+      "UserLastName" : {
+        "type" : "string",
+        "description" : "The last name of the new user",
+        "example" : "Kalule"
+      },
+      "UserOtherNames" : {
+        "type" : "string",
+        "description" : "The other names of the new user",
+        "example" : "Gerald"
+      },
+      "UserPhoneNumber" : {
+        "maxLength" : 10,
+        "minLength" : 10,
+        "type" : "string",
+        "description" : "Phonenumber must have a maximum of ten digits",
+        "example" : "7.72019937E8"
+      },
+      "UserName" : {
+        "minLength" : 4,
+        "type" : "string",
+        "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
+        "example" : "kalsmic"
+      },
+      "UserPassword" : {
+        "type" : "string",
+        "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
+        "format" : "password",
+        "example" : "Password123"
+      },
+      "UserEmail" : {
+        "type" : "string",
+        "description" : "The email address of the user",
+        "format" : "email",
+        "example" : "kalulearthur@gmail.com"
+      },
+      "IncidentId" : {
+        "type" : "object",
+        "additionalProperties" : {
+          "type" : "string",
+          "description" : "Unique reference to the incident Record",
+          "format" : "uuid"
+        }
+      },
+      "IncidentLocation" : {
+        "maxItems" : 2,
+        "minItems" : 2,
+        "type" : "array",
+        "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+        "example" : [ 43.0, 144.4 ]
+      },
+      "IncidentStatus" : {
+        "type" : "string",
+        "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+        "example" : "Resolved"
+      },
+      "IncidentComment" : {
+        "minLength" : 10,
+        "type" : "string",
+        "description" : "A Description of what happened",
+        "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
+      },
+      "IncidentTitle" : {
+        "maxLength" : 100,
+        "minLength" : 4,
+        "type" : "string",
+        "description" : "What the Incident is about",
+        "example" : "Lorem ipsum magna"
+      },
+      "created_by" : {
+        "type" : "string",
+        "description" : "Id of user who created the record",
+        "format" : "uuid"
+      },
+      "inline_response_201_data" : {
+        "type" : "object",
+        "properties" : {
+          "user" : {
+            "$ref" : "#/components/schemas/User"
+          },
+          "token" : {
+            "type" : "string",
+            "example" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOiI5MDI3NDk0Yy00MjFmLTQwMjItOTMxOC0wNjI4MzYzYTFkMjUiLCJpYXQiOjE1NDY5NDQ0MjEsImV4cCI6MTU0Njk1NTIyMX0.72QEK83GnyzUoDNNaEI3WCxhj3afz-ManTEjCmP_uTE"
+          },
+          "message" : {
+            "type" : "string",
+            "example" : "Account created Successfully"
+          }
+        }
+      },
+      "inline_response_201" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 201
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_201_data"
+            }
+          }
+        }
+      },
+      "body" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string",
+            "example" : "admin"
+          },
+          "password" : {
+            "type" : "string",
+            "example" : "iReporter123"
+          }
+        }
+      },
+      "inline_response_200_data" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "example" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOiI5MDI3NDk0Yy00MjFmLTQwMjItOTMxOC0wNjI4MzYzYTFkMjUiLCJpYXQiOjE1NDY5NDQ0MjEsImV4cCI6MTU0Njk1NTIyMX0.72QEK83GnyzUoDNNaEI3WCxhj3afz-ManTEjCmP_uTE"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Logged in successfully"
+          }
+        }
+      },
+      "inline_response_200" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_data"
+            }
+          }
+        }
+      },
+      "body_1" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "$ref" : "#/components/schemas/IncidentTitle"
+          },
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Can either be red-flag or intervention",
+            "example" : "red-flag"
+          },
+          "location" : {
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
+          },
+          "Videos" : {
+            "type" : "array",
+            "description" : "Video URLS",
+            "example" : [ "vid1.mp4", "vid2.mp4" ]
+          },
+          "Images" : {
+            "type" : "array",
+            "description" : "image URLS",
+            "example" : [ "image1.jpg", "image2.jpg" ]
+          }
+        }
+      },
+      "inline_response_201_1_data" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag" : {
+            "$ref" : "#/components/schemas/Red-flag"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Created red-flag record"
+          }
+        }
+      },
+      "inline_response_201_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 201
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_201_1_data"
+            }
+          }
+        }
+      },
+      "inline_response_200_1" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "Not Found",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/Red-flag"
+          }
+        }
+      },
+      "inline_response_200_2" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "Successful operation",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/Red-flag"
+          }
+        }
+      },
+      "inline_response_200_3_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "red-flag record has been deleted"
+          }
+        }
+      },
+      "inline_response_200_3" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_3_data"
+            }
+          }
+        }
+      },
+      "body_2" : {
+        "type" : "object",
+        "properties" : {
+          "location" : {
+            "$ref" : "#/components/schemas/IncidentLocation"
+          }
+        }
+      },
+      "inline_response_200_4_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          },
+          "location" : {
+            "type" : "string",
+            "example" : "(12.0000,34.000)"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Updated red-flag location"
+          }
+        }
+      },
+      "inline_response_200_4" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_4_data"
+            }
+          }
+        }
+      },
+      "body_3" : {
+        "type" : "object",
+        "properties" : {
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          }
+        }
+      },
+      "inline_response_200_5_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Updated red-flag comment"
+          }
+        }
+      },
+      "inline_response_200_5" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_5_data"
+            }
+          }
+        }
+      },
+      "body_4" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "$ref" : "#/components/schemas/IncidentStatus"
+          }
+        }
+      },
+      "inline_response_200_6_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Updated red-flag status"
+          }
+        }
+      },
+      "inline_response_200_6" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_6_data"
+            }
+          }
+        }
+      },
+      "inline_response_200_7" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "Not Found",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/intervention"
+          }
+        }
+      },
+      "inline_response_200_8" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "Successful operation",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/intervention"
+          }
+        }
+      },
+      "inline_response_200_9_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "intervention record has been deleted"
+          }
+        }
+      },
+      "inline_response_200_9" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_9_data"
+            }
+          }
+        }
+      },
+      "body_5" : {
+        "type" : "object",
+        "properties" : {
+          "location" : {
+            "$ref" : "#/components/schemas/IncidentLocation"
+          }
+        }
+      },
+      "inline_response_200_10_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          },
+          "location" : {
+            "type" : "string",
+            "example" : "(12.0000,34.000)"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Updated intervention location"
+          }
+        }
+      },
+      "inline_response_200_10" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_10_data"
+            }
+          }
+        }
+      },
+      "body_6" : {
+        "type" : "object",
+        "properties" : {
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          }
+        }
+      },
+      "inline_response_200_11_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Updated intervention comment"
+          }
+        }
+      },
+      "inline_response_200_11" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_11_data"
+            }
+          }
+        }
+      },
+      "body_7" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "$ref" : "#/components/schemas/IncidentStatus"
+          }
+        }
+      },
+      "inline_response_200_12_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "success" : {
+            "type" : "string",
+            "example" : "Updated intervention status"
+          }
+        }
+      },
+      "inline_response_200_12" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "integer",
+            "description" : "status code",
+            "format" : "int32",
+            "example" : 200
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/inline_response_200_12_data"
+            }
+          }
+        }
+      }
+    },
+    "responses" : {
+      "UnauthorizedError" : {
+        "description" : "Access token is missing or invalid"
+      },
+      "AdminForbiddenError" : {
+        "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+      },
+      "NonAdminForbiddenError" : {
+        "description" : "Returned when non admin user tries to access this endpoint"
+      },
+      "AuthDataKeyError" : {
+        "description" : "Returned when new user data has wrong field keys."
+      },
+      "RedFlagNotFound" : {
+        "description" : "Red-flag record with specified id does not exist"
+      },
+      "InterventionNotFound" : {
+        "description" : "Intervention record with specified id does not exist"
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  }
+}
