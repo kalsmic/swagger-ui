@@ -708,16 +708,29 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "description" : "Unique reference to the red-flag Record",
+            "format" : "uuid"
           },
           "title" : {
-            "$ref" : "#/components/schemas/IncidentTitle"
+            "maxLength" : 100,
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "What the Red-flag is about",
+            "example" : "Lorem ipsum magna"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "string",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : "[43.0, 144.4]"
           },
           "created_on" : {
             "type" : "string",
@@ -725,7 +738,9 @@
             "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
           },
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
           },
           "type" : {
             "type" : "string",
@@ -748,7 +763,9 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "description" : "Unique reference to the intervention Record",
+            "format" : "uuid"
           },
           "title" : {
             "maxLength" : 100,
@@ -900,11 +917,6 @@
         "type" : "string",
         "description" : "What the Incident is about",
         "example" : "Lorem ipsum magna"
-      },
-      "created_by" : {
-        "type" : "string",
-        "description" : "Id of user who created the record",
-        "format" : "uuid"
       },
       "inline_response_201_data" : {
         "type" : "object",
