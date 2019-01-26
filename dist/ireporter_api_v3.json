@@ -165,12 +165,12 @@
         "parameters" : [ {
           "name" : "red-flag-id",
           "in" : "path",
-          "description" : "ID of the Red-flag record you want to access",
+          "description" : "Id of the Red-flag record you want to access",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid"
           }
         } ],
         "responses" : {
@@ -188,7 +188,7 @@
             "description" : "Invalid Red-flag ID"
           },
           "401" : {
-            "description" : "Access token is missing or invalid"
+            "description" : "Returned Missing, invalid or expired token"
           },
           "404" : {
             "description" : "Red-flag record with specified id does not exist"
@@ -208,7 +208,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_1"
           }
         } ],
         "responses" : {
@@ -229,7 +229,7 @@
             "description" : "Returned when admin tries to delete a record  or when user tries to edit another's red-flag record"
           },
           "403" : {
-            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+            "description" : "Returned when status of Redflag is already either Resolved, Rejected or Under investigation"
           },
           "404" : {
             "description" : "Red-flag record with specified id does not exist"
@@ -251,7 +251,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_2"
           }
         } ],
         "requestBody" : {
@@ -307,7 +307,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_3"
           }
         } ],
         "requestBody" : {
@@ -363,7 +363,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_4"
           }
         } ],
         "requestBody" : {
@@ -439,7 +439,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid"
           }
         } ],
         "responses" : {
@@ -477,7 +477,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_1"
           }
         } ],
         "responses" : {
@@ -520,7 +520,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_2"
           }
         } ],
         "requestBody" : {
@@ -576,7 +576,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_3"
           }
         } ],
         "requestBody" : {
@@ -632,7 +632,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/interventionid_4"
           }
         } ],
         "requestBody" : {
@@ -682,25 +682,44 @@
             "format" : "uuid"
           },
           "firstname" : {
-            "$ref" : "#/components/schemas/UserFirstName"
+            "type" : "string",
+            "description" : "The first name of new user",
+            "example" : "Arthur"
           },
           "lastname" : {
-            "$ref" : "#/components/schemas/UserLastName"
+            "type" : "string",
+            "description" : "The last name of the new user",
+            "example" : "Kalule"
           },
           "othernames" : {
-            "$ref" : "#/components/schemas/UserOtherNames"
+            "type" : "string",
+            "description" : "The other names of the new user",
+            "example" : "Gerald"
           },
           "email" : {
-            "$ref" : "#/components/schemas/UserEmail"
+            "type" : "string",
+            "description" : "The email address of the user",
+            "format" : "email",
+            "example" : "kalulearthur@gmail.com"
           },
           "password" : {
-            "$ref" : "#/components/schemas/UserPassword"
+            "type" : "string",
+            "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
+            "format" : "password",
+            "example" : "Password123"
           },
           "username" : {
-            "$ref" : "#/components/schemas/UserName"
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
+            "example" : "kalsmic"
           },
           "phoneNumber" : {
-            "$ref" : "#/components/schemas/UserPhoneNumber"
+            "maxLength" : 10,
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "Phonenumber must have a maximum of ten digits",
+            "example" : "7.72019937E8"
           }
         }
       },
@@ -708,16 +727,29 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "description" : "Unique reference to the red-flag Record",
+            "format" : "uuid"
           },
           "title" : {
-            "$ref" : "#/components/schemas/IncidentTitle"
+            "maxLength" : 100,
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "What the Red-flag is about",
+            "example" : "Lorem ipsum magna"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "string",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : "[43.0, 144.4]"
           },
           "created_on" : {
             "type" : "string",
@@ -725,7 +757,9 @@
             "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
           },
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
           },
           "type" : {
             "type" : "string",
@@ -748,16 +782,29 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "description" : "Unique reference to the intervention Record",
+            "format" : "uuid"
           },
           "title" : {
-            "$ref" : "#/components/schemas/IncidentTitle"
+            "maxLength" : 100,
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "What the Incident is about",
+            "example" : "Lorem ipsum magna"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "string",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : "[43.0, 144.4]"
           },
           "created_on" : {
             "type" : "string",
@@ -765,10 +812,14 @@
             "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
           },
           "createdby" : {
-            "$ref" : "#/components/schemas/created_by"
+            "type" : "string",
+            "description" : "Id of user who created the record",
+            "format" : "uuid"
           },
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
           },
           "type" : {
             "type" : "string",
@@ -791,105 +842,46 @@
         "type" : "object",
         "properties" : {
           "firstname" : {
-            "$ref" : "#/components/schemas/UserFirstName"
+            "type" : "string",
+            "description" : "The first name of new user",
+            "example" : "Arthur"
           },
           "lastname" : {
-            "$ref" : "#/components/schemas/UserLastName"
+            "type" : "string",
+            "description" : "The last name of the new user",
+            "example" : "Kalule"
           },
           "othernames" : {
-            "$ref" : "#/components/schemas/UserOtherNames"
+            "type" : "string",
+            "description" : "The other names of the new user",
+            "example" : "Gerald"
           },
           "email" : {
-            "$ref" : "#/components/schemas/UserEmail"
+            "type" : "string",
+            "description" : "The email address of the user",
+            "format" : "email",
+            "example" : "kalulearthur@gmail.com"
           },
           "password" : {
-            "$ref" : "#/components/schemas/UserPassword"
+            "type" : "string",
+            "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
+            "format" : "password",
+            "example" : "Password123"
           },
           "username" : {
-            "$ref" : "#/components/schemas/UserName"
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
+            "example" : "kalsmic"
           },
           "phoneNumber" : {
-            "$ref" : "#/components/schemas/UserPhoneNumber"
+            "maxLength" : 10,
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "Phonenumber must have a maximum of ten digits",
+            "example" : "7.72019937E8"
           }
         }
-      },
-      "UserFirstName" : {
-        "type" : "string",
-        "description" : "The first name of new user",
-        "example" : "Arthur"
-      },
-      "UserLastName" : {
-        "type" : "string",
-        "description" : "The last name of the new user",
-        "example" : "Kalule"
-      },
-      "UserOtherNames" : {
-        "type" : "string",
-        "description" : "The other names of the new user",
-        "example" : "Gerald"
-      },
-      "UserPhoneNumber" : {
-        "maxLength" : 10,
-        "minLength" : 10,
-        "type" : "string",
-        "description" : "Phonenumber must have a maximum of ten digits",
-        "example" : "7.72019937E8"
-      },
-      "UserName" : {
-        "minLength" : 4,
-        "type" : "string",
-        "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
-        "example" : "kalsmic"
-      },
-      "UserPassword" : {
-        "type" : "string",
-        "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
-        "format" : "password",
-        "example" : "Password123"
-      },
-      "UserEmail" : {
-        "type" : "string",
-        "description" : "The email address of the user",
-        "format" : "email",
-        "example" : "kalulearthur@gmail.com"
-      },
-      "IncidentId" : {
-        "type" : "object",
-        "additionalProperties" : {
-          "type" : "string",
-          "description" : "Unique reference to the incident Record",
-          "format" : "uuid"
-        }
-      },
-      "IncidentLocation" : {
-        "maxItems" : 2,
-        "minItems" : 2,
-        "type" : "array",
-        "description" : "Where the incident took place. It contains latitude and longitude coordinates",
-        "example" : [ 43.0, 144.4 ]
-      },
-      "IncidentStatus" : {
-        "type" : "string",
-        "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
-        "example" : "Resolved"
-      },
-      "IncidentComment" : {
-        "minLength" : 10,
-        "type" : "string",
-        "description" : "A Description of what happened",
-        "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
-      },
-      "IncidentTitle" : {
-        "maxLength" : 100,
-        "minLength" : 4,
-        "type" : "string",
-        "description" : "What the Incident is about",
-        "example" : "Lorem ipsum magna"
-      },
-      "created_by" : {
-        "type" : "string",
-        "description" : "Id of user who created the record",
-        "format" : "uuid"
       },
       "inline_response_201_data" : {
         "type" : "object",
@@ -969,10 +961,17 @@
         "type" : "object",
         "properties" : {
           "title" : {
-            "$ref" : "#/components/schemas/IncidentTitle"
+            "maxLength" : 100,
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "What the Incident is about",
+            "example" : "Lorem ipsum magna"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "type" : {
             "type" : "string",
@@ -1040,6 +1039,64 @@
           }
         }
       },
+      "redflagid" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
+      "inline_response_200_2_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "What the Incident is about."
+          },
+          "comment" : {
+            "type" : "string",
+            "description" : "A description of what happened."
+          },
+          "location" : {
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
+          },
+          "created_on" : {
+            "type" : "string",
+            "description" : "Date when record was created",
+            "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Can either be red-flag or intervention",
+            "example" : "red-flag"
+          },
+          "Videos" : {
+            "type" : "string",
+            "description" : "Video URLS",
+            "example" : "[vid1.mp4, vid2.mp4]"
+          },
+          "Images" : {
+            "type" : "string",
+            "description" : "image URLS",
+            "example" : "[image1.jpg, image2.jpg]"
+          }
+        }
+      },
       "inline_response_200_2" : {
         "type" : "object",
         "properties" : {
@@ -1050,7 +1107,17 @@
             "example" : 200
           },
           "data" : {
-            "$ref" : "#/components/schemas/Red-flag"
+            "$ref" : "#/components/schemas/inline_response_200_2_data"
+          }
+        }
+      },
+      "redflagid_1" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the deleted red-flag record",
+            "format" : "uuid"
           }
         }
       },
@@ -1088,7 +1155,20 @@
         "type" : "object",
         "properties" : {
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
+          }
+        }
+      },
+      "redflagid_2" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1096,7 +1176,9 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "description" : "Unique reference to the incident Record",
+            "format" : "uuid"
           },
           "location" : {
             "type" : "string",
@@ -1129,7 +1211,19 @@
         "type" : "object",
         "properties" : {
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
+          }
+        }
+      },
+      "redflagid_3" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1141,7 +1235,10 @@
             "format" : "uuid"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "success" : {
             "type" : "string",
@@ -1170,7 +1267,18 @@
         "type" : "object",
         "properties" : {
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
+          }
+        }
+      },
+      "redflagid_4" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1218,6 +1326,15 @@
           }
         }
       },
+      "interventionid" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
       "inline_response_200_8" : {
         "type" : "object",
         "properties" : {
@@ -1229,6 +1346,15 @@
           },
           "data" : {
             "$ref" : "#/components/schemas/intervention"
+          }
+        }
+      },
+      "interventionid_1" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1266,7 +1392,20 @@
         "type" : "object",
         "properties" : {
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
+          }
+        }
+      },
+      "interventionid_2" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1274,7 +1413,8 @@
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "format" : "uuid"
           },
           "location" : {
             "type" : "string",
@@ -1307,7 +1447,19 @@
         "type" : "object",
         "properties" : {
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
+          }
+        }
+      },
+      "interventionid_3" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
@@ -1319,7 +1471,10 @@
             "format" : "uuid"
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           },
           "success" : {
             "type" : "string",
@@ -1348,7 +1503,18 @@
         "type" : "object",
         "properties" : {
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Intervention status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
+          }
+        }
+      },
+      "interventionid_4" : {
+        "type" : "object",
+        "properties" : {
+          "intervention-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
