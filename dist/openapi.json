@@ -165,12 +165,12 @@
         "parameters" : [ {
           "name" : "red-flag-id",
           "in" : "path",
-          "description" : "ID of the Red-flag record you want to access",
+          "description" : "Id of the Red-flag record you want to access",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid"
           }
         } ],
         "responses" : {
@@ -188,7 +188,7 @@
             "description" : "Invalid Red-flag ID"
           },
           "401" : {
-            "description" : "Access token is missing or invalid"
+            "description" : "Returned Missing, invalid or expired token"
           },
           "404" : {
             "description" : "Red-flag record with specified id does not exist"
@@ -208,7 +208,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/redflagid"
+            "$ref" : "#/components/schemas/redflagid_1"
           }
         } ],
         "responses" : {
@@ -229,7 +229,7 @@
             "description" : "Returned when admin tries to delete a record  or when user tries to edit another's red-flag record"
           },
           "403" : {
-            "description" : "Returned when admin tries to access endpoint or when user tries to edit another user's resource."
+            "description" : "Returned when status of Redflag is already either Resolved, Rejected or Under investigation"
           },
           "404" : {
             "description" : "Red-flag record with specified id does not exist"
@@ -251,7 +251,7 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "$ref" : "#/components/schemas/redflagid_2"
           }
         } ],
         "requestBody" : {
@@ -1042,20 +1042,36 @@
           }
         }
       },
+      "redflagid" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
       "inline_response_200_2_data" : {
         "type" : "object",
         "properties" : {
           "id" : {
-            "$ref" : "#/components/schemas/IncidentId"
+            "type" : "string",
+            "format" : "uuid"
           },
           "title" : {
-            "$ref" : "#/components/schemas/IncidentTitle"
+            "type" : "string",
+            "description" : "What the Incident is about."
           },
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "type" : "string",
+            "description" : "A description of what happened."
           },
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
           },
           "created_on" : {
             "type" : "string",
@@ -1063,7 +1079,9 @@
             "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
           },
           "status" : {
-            "$ref" : "#/components/schemas/IncidentStatus"
+            "type" : "string",
+            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "example" : "Resolved"
           },
           "type" : {
             "type" : "string",
@@ -1096,7 +1114,7 @@
           }
         }
       },
-      "redflagid" : {
+      "redflagid_1" : {
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1140,7 +1158,20 @@
         "type" : "object",
         "properties" : {
           "location" : {
-            "$ref" : "#/components/schemas/IncidentLocation"
+            "maxItems" : 2,
+            "minItems" : 2,
+            "type" : "array",
+            "description" : "Where the incident took place. It contains latitude and longitude coordinates",
+            "example" : [ 43.0, 144.4 ]
+          }
+        }
+      },
+      "redflagid_2" : {
+        "type" : "object",
+        "properties" : {
+          "red-flag-id" : {
+            "type" : "string",
+            "format" : "uuid"
           }
         }
       },
