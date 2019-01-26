@@ -27,7 +27,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/NewUser"
+                "$ref" : "#/components/schemas/body"
               }
             }
           },
@@ -66,7 +66,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body"
+                "$ref" : "#/components/schemas/body_1"
               }
             }
           },
@@ -104,7 +104,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_1"
+                "$ref" : "#/components/schemas/body_2"
               }
             }
           },
@@ -258,7 +258,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_2"
+                "$ref" : "#/components/schemas/body_3"
               }
             }
           },
@@ -314,7 +314,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_3"
+                "$ref" : "#/components/schemas/body_4"
               }
             }
           },
@@ -370,7 +370,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_4"
+                "$ref" : "#/components/schemas/body_5"
               }
             }
           },
@@ -527,7 +527,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_5"
+                "$ref" : "#/components/schemas/body_6"
               }
             }
           },
@@ -583,7 +583,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_6"
+                "$ref" : "#/components/schemas/body_7"
               }
             }
           },
@@ -639,7 +639,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/body_7"
+                "$ref" : "#/components/schemas/body_8"
               }
             }
           },
@@ -838,7 +838,7 @@
           }
         }
       },
-      "NewUser" : {
+      "body" : {
         "type" : "object",
         "properties" : {
           "firstname" : {
@@ -915,7 +915,7 @@
           }
         }
       },
-      "body" : {
+      "body_1" : {
         "type" : "object",
         "properties" : {
           "username" : {
@@ -957,7 +957,7 @@
           }
         }
       },
-      "body_1" : {
+      "body_2" : {
         "type" : "object",
         "properties" : {
           "title" : {
@@ -1151,7 +1151,7 @@
           }
         }
       },
-      "body_2" : {
+      "body_3" : {
         "type" : "object",
         "properties" : {
           "location" : {
@@ -1207,7 +1207,7 @@
           }
         }
       },
-      "body_3" : {
+      "body_4" : {
         "type" : "object",
         "properties" : {
           "comment" : {
@@ -1263,7 +1263,7 @@
           }
         }
       },
-      "body_4" : {
+      "body_5" : {
         "type" : "object",
         "properties" : {
           "status" : {
@@ -1388,7 +1388,7 @@
           }
         }
       },
-      "body_5" : {
+      "body_6" : {
         "type" : "object",
         "properties" : {
           "location" : {
@@ -1443,7 +1443,7 @@
           }
         }
       },
-      "body_6" : {
+      "body_7" : {
         "type" : "object",
         "properties" : {
           "comment" : {
@@ -1499,7 +1499,7 @@
           }
         }
       },
-      "body_7" : {
+      "body_8" : {
         "type" : "object",
         "properties" : {
           "status" : {
