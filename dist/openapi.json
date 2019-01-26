@@ -1042,6 +1042,46 @@
           }
         }
       },
+      "inline_response_200_2_data" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/IncidentId"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/IncidentTitle"
+          },
+          "comment" : {
+            "$ref" : "#/components/schemas/IncidentComment"
+          },
+          "location" : {
+            "$ref" : "#/components/schemas/IncidentLocation"
+          },
+          "created_on" : {
+            "type" : "string",
+            "description" : "Date when record was created",
+            "example" : "Thu, 03 Jan 2019 00:00:00 GMT"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/IncidentStatus"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Can either be red-flag or intervention",
+            "example" : "red-flag"
+          },
+          "Videos" : {
+            "type" : "string",
+            "description" : "Video URLS",
+            "example" : "[vid1.mp4, vid2.mp4]"
+          },
+          "Images" : {
+            "type" : "string",
+            "description" : "image URLS",
+            "example" : "[image1.jpg, image2.jpg]"
+          }
+        }
+      },
       "inline_response_200_2" : {
         "type" : "object",
         "properties" : {
@@ -1052,7 +1092,7 @@
             "example" : 200
           },
           "data" : {
-            "$ref" : "#/components/schemas/Red-flag"
+            "$ref" : "#/components/schemas/inline_response_200_2_data"
           }
         }
       },
