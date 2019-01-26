@@ -682,25 +682,44 @@
             "format" : "uuid"
           },
           "firstname" : {
-            "$ref" : "#/components/schemas/UserFirstName"
+            "type" : "string",
+            "description" : "The first name of new user",
+            "example" : "Arthur"
           },
           "lastname" : {
-            "$ref" : "#/components/schemas/UserLastName"
+            "type" : "string",
+            "description" : "The last name of the new user",
+            "example" : "Kalule"
           },
           "othernames" : {
-            "$ref" : "#/components/schemas/UserOtherNames"
+            "type" : "string",
+            "description" : "The other names of the new user",
+            "example" : "Gerald"
           },
           "email" : {
-            "$ref" : "#/components/schemas/UserEmail"
+            "type" : "string",
+            "description" : "The email address of the user",
+            "format" : "email",
+            "example" : "kalulearthur@gmail.com"
           },
           "password" : {
-            "$ref" : "#/components/schemas/UserPassword"
+            "type" : "string",
+            "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
+            "format" : "password",
+            "example" : "Password123"
           },
           "username" : {
-            "$ref" : "#/components/schemas/UserName"
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
+            "example" : "kalsmic"
           },
           "phoneNumber" : {
-            "$ref" : "#/components/schemas/UserPhoneNumber"
+            "maxLength" : 10,
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "Phonenumber must have a maximum of ten digits",
+            "example" : "7.72019937E8"
           }
         }
       },
@@ -823,67 +842,46 @@
         "type" : "object",
         "properties" : {
           "firstname" : {
-            "$ref" : "#/components/schemas/UserFirstName"
+            "type" : "string",
+            "description" : "The first name of new user",
+            "example" : "Arthur"
           },
           "lastname" : {
-            "$ref" : "#/components/schemas/UserLastName"
+            "type" : "string",
+            "description" : "The last name of the new user",
+            "example" : "Kalule"
           },
           "othernames" : {
-            "$ref" : "#/components/schemas/UserOtherNames"
+            "type" : "string",
+            "description" : "The other names of the new user",
+            "example" : "Gerald"
           },
           "email" : {
-            "$ref" : "#/components/schemas/UserEmail"
+            "type" : "string",
+            "description" : "The email address of the user",
+            "format" : "email",
+            "example" : "kalulearthur@gmail.com"
           },
           "password" : {
-            "$ref" : "#/components/schemas/UserPassword"
+            "type" : "string",
+            "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
+            "format" : "password",
+            "example" : "Password123"
           },
           "username" : {
-            "$ref" : "#/components/schemas/UserName"
+            "minLength" : 4,
+            "type" : "string",
+            "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
+            "example" : "kalsmic"
           },
           "phoneNumber" : {
-            "$ref" : "#/components/schemas/UserPhoneNumber"
+            "maxLength" : 10,
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "Phonenumber must have a maximum of ten digits",
+            "example" : "7.72019937E8"
           }
         }
-      },
-      "UserFirstName" : {
-        "type" : "string",
-        "description" : "The first name of new user",
-        "example" : "Arthur"
-      },
-      "UserLastName" : {
-        "type" : "string",
-        "description" : "The last name of the new user",
-        "example" : "Kalule"
-      },
-      "UserOtherNames" : {
-        "type" : "string",
-        "description" : "The other names of the new user",
-        "example" : "Gerald"
-      },
-      "UserPhoneNumber" : {
-        "maxLength" : 10,
-        "minLength" : 10,
-        "type" : "string",
-        "description" : "Phonenumber must have a maximum of ten digits",
-        "example" : "7.72019937E8"
-      },
-      "UserName" : {
-        "minLength" : 4,
-        "type" : "string",
-        "description" : "Username may contain numbers and should be atleast 5 characters long.\n",
-        "example" : "kalsmic"
-      },
-      "UserPassword" : {
-        "type" : "string",
-        "description" : "The password should be 8 characters long and must include atleast one upper case character, atleast one lower case character and atleast one digit character\n",
-        "format" : "password",
-        "example" : "Password123"
-      },
-      "UserEmail" : {
-        "type" : "string",
-        "description" : "The email address of the user",
-        "format" : "email",
-        "example" : "kalulearthur@gmail.com"
       },
       "inline_response_201_data" : {
         "type" : "object",
