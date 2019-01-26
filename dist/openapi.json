@@ -1212,7 +1212,10 @@
         "type" : "object",
         "properties" : {
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           }
         }
       },
@@ -1390,7 +1393,10 @@
         "type" : "object",
         "properties" : {
           "comment" : {
-            "$ref" : "#/components/schemas/IncidentComment"
+            "minLength" : 10,
+            "type" : "string",
+            "description" : "A Description of what happened",
+            "example" : "Lorem ipsum eiusmod temport labore et dolore magna"
           }
         }
       },
