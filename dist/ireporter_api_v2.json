@@ -64,7 +64,7 @@
                     "description" : "Phonenumber must have a maximum of ten digits",
                     "minLength" : 10,
                     "maxLength" : 10,
-                    "example" : 7.72019937E8
+                    "example" : "0772019937"
                   }
                 }
               }
@@ -1286,7 +1286,7 @@
             "format" : "uuid"
           },
           "title" : {
-            "description" : "What the Incident is about",
+            "description" : "What the Intervention is about",
             "type" : "string",
             "minLength" : 4,
             "maxLength" : 100,
@@ -1317,7 +1317,7 @@
           },
           "status" : {
             "type" : "string",
-            "description" : "Redflag status can either be Draft, Under investigation,Resolved or Rejected\n",
+            "description" : "Intervention status can either be Draft, Under investigation,Resolved or Rejected\n",
             "example" : "Resolved"
           },
           "type" : {
