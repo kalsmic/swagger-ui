@@ -10,8 +10,8 @@
     "version" : "v3"
   },
   "servers" : [ {
-    "url" : "https://ireporterapiv3.herokuapp.com/api/v3",
-    "description" : "Ireporter API DEV"
+    "url" : "https://questionerdojo.herokuapp.com",
+    "description" : "questioner API DEV"
   } ],
   "security" : [ {
     "bearerAuth" : [ ]
@@ -904,7 +904,6 @@
         "properties" : {
           "status" : {
             "type" : "integer",
-            "format" : "int32",
             "example" : 201
           },
           "data" : {
@@ -946,7 +945,6 @@
         "properties" : {
           "status" : {
             "type" : "integer",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1014,7 +1012,6 @@
         "properties" : {
           "status" : {
             "type" : "integer",
-            "format" : "int32",
             "example" : 201
           },
           "data" : {
@@ -1031,7 +1028,6 @@
           "status" : {
             "type" : "integer",
             "description" : "Not Found",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1103,7 +1099,6 @@
           "status" : {
             "type" : "integer",
             "description" : "Successful operation",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1140,7 +1135,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1196,7 +1190,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1252,7 +1245,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1301,7 +1293,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1318,7 +1309,6 @@
           "status" : {
             "type" : "integer",
             "description" : "Not Found",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1341,7 +1331,6 @@
           "status" : {
             "type" : "integer",
             "description" : "Successful operation",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1377,7 +1366,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1432,7 +1420,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1488,7 +1475,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
@@ -1537,7 +1523,6 @@
           "status" : {
             "type" : "integer",
             "description" : "status code",
-            "format" : "int32",
             "example" : 200
           },
           "data" : {
