@@ -10,8 +10,8 @@
     "version" : "v3"
   },
   "servers" : [ {
-    "url" : "https://questionerdojo.herokuapp.com",
-    "description" : "questioner API DEV"
+    "url" : "https://ireporterapiv3.herokuapp.com/api/v3",
+    "description" : "Ireporter API DEV"
   } ],
   "security" : [ {
     "bearerAuth" : [ ]
